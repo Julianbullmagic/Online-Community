@@ -5,17 +5,16 @@
   "homepage": "https://democratic-social-network.herokuapp.com/",
   "main": "index.js",
   "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "node server.js",
-      "server": "nodemon server.js",
-      "client": "npm start --prefix client",
-      "client-install": "npm install --prefix client",
-      "dev": "concurrently \"npm run server\" \"npm run client\"",
-      "heroku-postbuild": "cd app && cd client && npm install --only=dev && npm install && npm run build",
-      "full-install": "npm install && npm install --prefix client"
-    },
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "client-install": "npm install --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "cd app && cd client && npm install --only=dev && npm install && npm run build",
+    "full-install": "npm install && npm install --prefix client"
+  },
   "author": "",
-
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
@@ -30,6 +29,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.6.0",
     "express": "^4.16.4",
+    "express-fileupload": "^1.4.0",
     "express-force-ssl": "^0.3.2",
     "express-jwt": "5.3.1",
     "helmet": "3.22.0",
