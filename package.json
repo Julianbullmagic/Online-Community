@@ -54,7 +54,7 @@
     "use-dynamic-refs": "^1.0.0"
   },
   "engines": {
-    "node": "11.15.0"
+    "node": "^10 || ^12 || ^13.7 || ^14 || >=15.0.1"
   },
   "devDependencies": {
     "chai-http": "^4.3.0",
