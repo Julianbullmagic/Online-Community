@@ -1,0 +1,6 @@
+{
+  "appId": "com.democraticsocialnetwork.app",
+  "appName": "Democratic Social Network",
+  "webDir": "build",
+  "bundledWebRuntime": false
+}
