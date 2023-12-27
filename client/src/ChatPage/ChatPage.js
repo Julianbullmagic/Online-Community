@@ -322,8 +322,7 @@ let users=this.state.users.map(item=>item._id)
     value={this.state.chatMessage}
     onChange={this.handleInputChange}></textarea>
 
-    {(users.includes(auth.isAuthenticated().user._id))&&
-      <button style={{display:"inline",marginTop:"0.5vh"}} className="submitbutton" onClick={this.submitChatMessage}>Submit Message</button>}
+      <button style={{display:"inline",marginTop:"0.5vh"}} className="submitbutton" onClick={this.submitChatMessage}>Submit Message</button>
       <select style={{marginLeft:"1vw",marginTop:"0.5vh",display:"inline"}} name="room" id="room" onChange={this.handleuserchange}>
       <option value="All Group Chat">All Group Chat {this.state.unreadwholegroupmessages} unread messages</option>
       {this.state.users&&this.state.users.map(user=>{

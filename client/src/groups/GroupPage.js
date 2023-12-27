@@ -13,6 +13,7 @@ import {Image} from 'cloudinary-react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import io from "socket.io-client";
+import GameComponent from './game';
 import {Redirect} from 'react-router-dom'
 const mongoose = require("mongoose");
 
@@ -266,6 +267,7 @@ if(auth.isAuthenticated()){
           {(this.state.users.length>50)&&<h4 style={{margin:"0.5vw"}} className="activemembers">This group is full, the maximum number of members in all groups is 50</h4>}
 
           <TabList>
+          <Tab>Game</Tab>
           {!this.state.cannotpost&&<Tab><div className="news">News</div></Tab>}
           <Tab>Group Details</Tab>
           {(auth.isAuthenticated().user.cool&&!this.state.cannotvoteforleaders)&&<Tab><div className="leaders">Leaders</div></Tab>}
@@ -274,7 +276,9 @@ if(auth.isAuthenticated()){
           {!this.state.cannotseeevents&&<Tab><div className="events">Events</div></Tab>}
           {!this.state.cannotvoteinjury&&<Tab><div className="jury">Jury</div></Tab>}
           </TabList>
-
+          <TabPanel>
+          <GameComponent/>
+            </TabPanel>
           {!this.state.cannotpost&&<TabPanel>
             <Newsfeed socket={this.socket} users={this.state.users} groupId={this.props.match.params.groupId} groupTitle={this.state.group.title} group={this.state.group}/>
             </TabPanel>}

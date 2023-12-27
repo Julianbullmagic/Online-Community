@@ -76,6 +76,8 @@ export default function Signin(props) {
         auth.authenticate(data, () => {
           setValues({ ...values, error: '',redirectToReferrer: true})
         })
+
+        localStorage.setItem('name', data.user.name);
         socket.emit("new user", data.user.name);
         setLoggingIn(false)
       }
