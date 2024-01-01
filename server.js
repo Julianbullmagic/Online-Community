@@ -23,6 +23,12 @@ const cookieParser = require("cookie-parser");
 const fs = require("fs");
 var cron = require('node-cron');
 const User = require("./models/user.model");
+const Tree = require("./models/tree.model");
+const House = require("./models/house.model");
+const Flower = require("./models/flower.model");
+const Wheat = require("./models/Wheat.model");
+const Rock = require("./models/rock.model");
+const CollectiveInventory = require("./models/collective-inventory.model");
 const Group = require("./models/group.model");
 const Rule = require("./models/rule.model");
 const Event = require("./models/event.model");
@@ -96,23 +102,121 @@ app.use('/rules', rulesRoutes)
 app.use('/events', eventsRoutes)
 app.use('/posts',postRoutes)
 app.use('/polls', pollRoutes)
-
-
-
 app.use('/api/users', require('./routes/users'));
 app.use('/api/chat', require('./routes/chat'));
 
+let trees=[]
+let rocks=[]
+let houses=[]
+let wheat=[]
+let flowers=[]
+let collectiveInventory=[]
 
-// const MILLISECONDS_IN_A_MONTH=2629800000
-// const MILLISECONDS_IN_THREE_MONTHS=7889400000
-// const MILLISECONDS_IN_A_DAY=86400000
-// const MILLISECONDS_IN_NINE_MONTHS=23668200000
+
+// let newHouse = new CollectiveInventory({
+//   _id:mongoose.Types.ObjectId(),
+//   wood:1,
+//   iron:1,
+//   copper:1,
+//   stone:1,
+//   fish:1,
+//   grain:1
+// });
+//
+// newHouse.save((err) => {
+//   if(err){
+//     console.log(err)
+//   }else{
+//     console.log("successfully created house")
+//   }
+// })
+//
+//  newHouse = new House({
+//    _id:mongoose.Types.ObjectId(),
+//   x:400,
+//   y:700
+// });
+//
+// newHouse.save((err) => {
+//   if(err){
+//     console.log(err)
+//   }else{
+//     console.log("successfully created house")
+//   }
+// })
+
+
+
+async function getGameObjects(){
+
+  trees=await Tree.find().exec()
+  console.log(trees,"trees")
+  rocks=await Rock.find().exec()
+  console.log(rocks,"rocks")
+  houses=await House.find().exec()
+  console.log(houses,"houses")
+  wheat=await Wheat.find().exec()
+  console.log(wheat,"wheat")
+  flowers=await Flower.find().exec()
+  console.log(flowers,"flowers")
+  collectiveInventory=await CollectiveInventory.find({_id:"658f30d4e4cbc5097036204d"}).exec()
+  console.log(collectiveInventory,"collective inventory")
+}
+getGameObjects()
+
+// setInterval(saveState, 10000)
+setInterval(sendState, 1000)
+setInterval(checkMovement, 2000)
+
+function saveState(){
+  console.log("saving state")
+}
+
+function checkMovement(){
+  for (let player of players){
+        if (!player.moving){
+          player.nomovement=player.nomovement+1
+        }
+        if(player.moving){
+          player.nomovement=0
+        }
+        if (player.nomovement>150){
+          logout(player.id)
+        }
+    console.log(player)
+  }
+  console.log(players)
+}
+
+
+function logout(name){
+  let newplayers=[]
+  for (let player of players){
+    if (player.id!==name){
+    newplayers.push(player)
+  }
+}
+  players=newplayers
+  io.emit("playing logging out because inactive",JSON.stringify(name))
+}
+
+function sendState(){
+  let gamestate={players:players,trees:trees,rocks:rocks,houses:houses,wheat:wheat,flowers:flowers,collectiveInventory:collectiveInventory[0]}
+  console.log("state",gamestate)
+  io.emit('updateState',JSON.stringify(gamestate))
+}
+
+const MILLISECONDS_IN_A_MONTH=2629800000
+const MILLISECONDS_IN_THREE_MONTHS=7889400000
+const MILLISECONDS_IN_A_DAY=86400000
+const MILLISECONDS_IN_NINE_MONTHS=23668200000
 let grouptitles
 cron.schedule('0 0 0 * * *', () => {
 (async function(){
  grouptitles=await Group.find({cool:true}).exec()
  grouptitles=grouptitles.map(item=>item.title)
-})()})
+})()
+})
 //
 // cron.schedule('0 0 0 * * *', () => {
 //
@@ -171,14 +275,11 @@ cron.schedule('0 0 0 * * *', () => {
 //
 //     let index=user.signins.length-1
 //
-//
 //     let timeelapsedsincelogin=n-user.signins[`${index}`]
 //
 //     if(timeelapsedsincelogin>MILLISECONDS_IN_A_MONTH){
-//
 //       if(user.images){
 //         for (let img of user.images){
-//
 //           cloudinary.uploader.destroy(img, function(error,result) {
 //             console.error(error)
 //             console.log(result)
@@ -422,12 +523,45 @@ cron.schedule('0 0 0 * * *', () => {
 // })
 
 
-var users={}
-
+let players=[]
+let users={}
 
 io.on("connection", socket => {
 
 socket.on("connect_error", (err) => {  console.log(`connect_error due to ${err.message}`);})
+
+let playerid=""
+
+socket.on('player joining', (data) => {
+  let parseddata=JSON.parse(data)
+  playerid=parseddata.name
+  let nametaken=false
+  for (let player of players){
+    if (player.id==playerid){
+    nametaken=true
+  }
+}
+  if(!nametaken){
+    players.push({id:parseddata.name,x:parseddata.name.x,y:parseddata.y,nomovement:0,moving:false})
+  }
+});
+
+socket.on('returning state', (data) => {
+  let parseddata=JSON.parse(data)
+  for (let player of players){
+    if(parseddata.id==player.id){
+      player.x=parseddata.x
+      player.y=parseddata.y
+      player.moving=parseddata.moving
+      player.direction=parseddata.direction
+    }
+  }
+});
+
+socket.on('logout', (playername) => {
+  console.log(`${playername} logging out`);
+    logout(playername)
+});
 
   socket.on("new user",function(data){
       socket.name=data
@@ -516,10 +650,8 @@ console.log(allrooms)
 
 
   socket.on("Input Chat Message", msg => {
-
     connect.then(db => {
       try {
-
         var d = new Date();
         var n = d.getTime();
         console.log(msg)
@@ -534,7 +666,6 @@ console.log(allrooms)
                 console.log("increase unread whole group count",msg.groupTitle,io.sockets.adapter.rooms)
                 io.emit("increase unread whole group count", doc);
                 return io.to(msg.groupTitle).emit("Output Chat Message", doc);
-
             })
           })
       } catch (error) {

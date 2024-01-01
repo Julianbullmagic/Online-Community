@@ -78,6 +78,7 @@ export default function Signin(props) {
         })
 
         localStorage.setItem('name', data.user.name);
+        localStorage.setItem('user', data.user.user);
         socket.emit("new user", data.user.name);
         setLoggingIn(false)
       }

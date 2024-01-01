@@ -50,10 +50,12 @@ class GroupPage extends Component {
       cannotcreatepolls:false,
       cannotsuggestrulesorvoteforrules:false,
       cannotseegigleads:false,
-      cannotvoteinjury:false
+      cannotvoteinjury:false,
+      collectiveInventory:{}
     }
     this.updateUser=this.updateUser.bind(this)
     this.join=this.join.bind(this)
+    this.updateParentState = this.updateParentState.bind(this);
     let socket
   }
 
@@ -68,16 +70,21 @@ class GroupPage extends Component {
     if(process.env.NODE_ENV=="development"){
       this.socket=io(server);
     }
+    window.addEventListener('updateCollectiveInventory', this.updateParentState);
+  }
+
+updateParentState(event){
+  const transmittedData = event.detail;
+  this.setState({ collectiveInventory: transmittedData });
+};
+  componentWillUnmount(){
+    window.removeEventListener('updateCollectiveInventory', this.updateParentState);
   }
 
   updateUser(updatedUser){
-console.log("updateing user",updatedUser)
     this.setState({user:updatedUser})
-
     let restrictions=updatedUser.restrictions
-
     for (let restriction of restrictions){
-
       if((restriction.restriction=="cannot post")&&(restriction.groupIds.includes(this.props.match.params.groupId))){
         this.setState({cannotpost:true})
       }
@@ -265,9 +272,9 @@ if(auth.isAuthenticated()){
           {(this.state.users.length<=50)&&joinOrLeave}
           {this.state.error&&<p className="toomanygroupserror" style={{color:"red"}}>{this.state.error}</p>}
           {(this.state.users.length>50)&&<h4 style={{margin:"0.5vw"}} className="activemembers">This group is full, the maximum number of members in all groups is 50</h4>}
-
           <TabList>
           <Tab>Game</Tab>
+          <Tab>Inventory</Tab>
           {!this.state.cannotpost&&<Tab><div className="news">News</div></Tab>}
           <Tab>Group Details</Tab>
           {(auth.isAuthenticated().user.cool&&!this.state.cannotvoteforleaders)&&<Tab><div className="leaders">Leaders</div></Tab>}
@@ -279,6 +286,17 @@ if(auth.isAuthenticated()){
           <TabPanel>
           <GameComponent/>
             </TabPanel>
+            <TabPanel>
+            {this.state.collectiveInventory&&<div>
+                        {JSON.stringify(this.state.collectiveInventory)}
+                        <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703889644/cedar_log_vgnser.png"/><h3>{this.state.collectiveInventory.wood} Wood</h3>
+                        <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703890100/iron_ore_2_ieqib1.png"/><h3>{this.state.collectiveInventory.ironore} Iron Ore</h3>
+                        <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703890099/iron_bar_cje575.png"/><h3>{this.state.collectiveInventory.steelbar} Steel Bar</h3>
+                        <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703890099/copper_ore_xvc5ot.png"/><h3>{this.state.collectiveInventory.copperore} Copper Ore</h3>
+                        <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703890099/copper_bar_fkbaol.png"/><h3>{this.state.collectiveInventory.copperbar} Copper Bar</h3>
+
+                        </div>}
+              </TabPanel>
           {!this.state.cannotpost&&<TabPanel>
             <Newsfeed socket={this.socket} users={this.state.users} groupId={this.props.match.params.groupId} groupTitle={this.state.group.title} group={this.state.group}/>
             </TabPanel>}
@@ -311,7 +329,4 @@ if(auth.isAuthenticated()){
                   );
                 }
               }
-
-
-
               export default GroupPage;

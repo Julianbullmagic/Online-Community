@@ -12,14 +12,10 @@ export default function GameComponent() {
       parent: 'game-content',
       orientation: Phaser.Scale.LANDSCAPE,
       localStorageName: 'some-game-title',
-      width:400,
-      height:300,
+      width:0.9*window.screen.width,
+      height:0.9*window.screen.height,
       autoRound: true,
       pixelArt: true,
-      scale: {
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        mode: Phaser.Scale.ENVELOP,
-      },
       scene: [
         TestScene
       ],

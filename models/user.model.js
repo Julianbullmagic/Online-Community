@@ -15,6 +15,13 @@ const userSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, 'Please fill a valid email address'],
     required: 'Email is required'
   },
+  x:Number,
+  y:Number,
+  tiredness:Number,
+  hunger:Number,
+  health:Number,
+  equippedtool:String,
+  tools:[String],
   cool:{type:Boolean,default:true},
   newmembers:{type:Boolean,default:false},
   groupstheybelongto:[{type: mongoose.Schema.ObjectId, ref: 'Group'}],
