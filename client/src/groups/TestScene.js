@@ -81,9 +81,22 @@ export default class TestScene extends Scene {
     this.wheatids=[]
     this.wheat=[]
     this.trees=[]
+    this.cowids=[]
+    this.cows=[]
+    this.chickenids=[]
+    this.chickens=[]
+    this.bearids=[]
+    this.bears=[]
+    this.spiderids=[]
+    this.spiders=[]
+    this.dragonids=[]
+    this.dragons=[]
     this.collectiveInventory={}
     this.positiontimer=0
     this.incr=0
+  }
+
+  shutdown() {
   }
 
 
@@ -153,14 +166,43 @@ export default class TestScene extends Scene {
     this.load.audio('digging', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062485/420876__inspectorj__digging-ice-hammer-c_dv6fmq.wav');
     this.load.audio('pickaxe hits rock', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/638696__captainyulef__pickaxe_edjpig.wav');
     this.load.audio('axe hits tree', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/421929__micahlg__chopping-wood-02_esxrmr.wav');
-
-
-
   }
 
-  create(){
-    const { events } = this.scene.manager;
+  destroyObject(object) {
+    console.log("Removing object", object);
 
+    // Log the current group memberships
+    console.log("Trees group contains:", this.trees.contains(object));
+    console.log("Rocks group contains:", this.rocks.contains(object));
+    console.log("Houses group contains:", this.houses.contains(object));
+    console.log("Flowers group contains:", this.flowers.contains(object));
+    console.log("Wheat group contains:", this.wheat.contains(object));
+
+    socket.emit('remove object', object.id);
+
+    // Remove the object from the appropriate group
+    if (this.trees.contains(object)) {
+      this.trees.remove(object, true, true);
+      console.log("Object removed from Trees group");
+    } else if (this.rocks.contains(object)) {
+      this.rocks.remove(object, true, true);
+      console.log("Object removed from Rocks group");
+    } else if (this.houses.contains(object)) {
+      this.houses.remove(object, true, true);
+      console.log("Object removed from Houses group");
+    } else if (this.flowers.contains(object)) {
+      this.flowers.remove(object, true, true);
+      console.log("Object removed from Flowers group");
+    } else if (this.wheat.contains(object)) {
+      this.wheat.remove(object, true, true);
+      console.log("Object removed from Wheat group");
+    } else {
+      console.log("Object not found in any group");
+    }
+  }
+
+
+  create(){
     //Layer creation
     // this.map = this.make.tilemap({
     //   key:'map data',
@@ -175,24 +217,90 @@ export default class TestScene extends Scene {
     this.houses=this.add.group()
     this.flowers=this.add.group()
     this.wheat=this.add.group()
-
+    this.cows= this.add.group()
+    this.chickens=this.add.group()
+    this.bears=this.add.group()
+    this.spiders=this.add.group()
+    this.dragons=this.add.group()
     // let tileset=this.map.addTilesetImage('gentle forest (48x48 resize) v05','map image')
     // this.baselayer=this.map.createLayer("Tile Layer 1", tileset,0,0).setScale(0.25);
     // this.clifflayer=this.map.createLayer("cliffs", tileset,0,0).setScale(0.25);
     // this.clifflayer.setCollisionByExclusion(-1)
-
+    let tempplayer=JSON.parse(sessionStorage.getItem("jwt"))
+    console.log(tempplayer.user,"PLAYER")
+    tempplayer=tempplayer.user
     this.player=this.physics.add.sprite(0,0,'guy').setBounce(0).setBodySize(20, 25)
     this.player.body.setOffset(14,5)
+    this.player.health=tempplayer.health
+    this.player.tiredness=tempplayer.tiredness
+    this.player.hunger=tempplayer.hunger
     this.player.uddirection="down"
     this.player.lrdirection="right"
     this.space=false
     this.player.doingaction=false
     this.player.axe=false
+    this.player.hammer=true
     this.player.sword=false
     this.player.pickaxe=true
     this.player.fishingrod=false
     this.player.shovel=false
-    console.log(this.player,"PLAYER")
+    let tool=localStorage.getItem("equipped tool")
+    if(!tool){
+      this.player.axe=false
+      this.player.hammer=false
+      this.player.sword=false
+      this.player.pickaxe=false
+      this.player.fishingrod=false
+      this.player.shovel=false
+    }
+    if(tool=="axes"){
+      this.player.axe=true
+      this.player.hammer=false
+      this.player.sword=false
+      this.player.pickaxe=false
+      this.player.fishingrod=false
+      this.player.shovel=false
+    }
+    if(tool=="hammers"){
+      this.player.axe=false
+      this.player.hammer=true
+      this.player.sword=false
+      this.player.pickaxe=false
+      this.player.fishingrod=false
+      this.player.shovel=false
+    }
+    if(tool=="swords"){
+      this.player.axe=false
+      this.player.hammer=false
+      this.player.sword=true
+      this.player.pickaxe=false
+      this.player.fishingrod=false
+      this.player.shovel=false
+    }
+    if(tool=="pickaxes"){
+      this.player.axe=false
+      this.player.hammer=false
+      this.player.sword=false
+      this.player.pickaxe=true
+      this.player.fishingrod=false
+      this.player.shovel=false
+    }
+    if(tool=="fishingrods"){
+      this.player.axe=false
+      this.player.hammer=false
+      this.player.sword=false
+      this.player.pickaxe=false
+      this.player.fishingrod=true
+      this.player.shovel=false
+    }
+    if(tool=="spades"){
+      this.player.axe=false
+      this.player.hammer=false
+      this.player.sword=false
+      this.player.pickaxe=false
+      this.player.fishingrod=false
+      this.player.shovel=true
+    }
     this.player.setScale(3);
     this.physics.add.collider(this.player, this.trees,collisionHandler);
     this.physics.add.collider(this.player,this.rocks,collisionHandler);
@@ -295,13 +403,14 @@ export default class TestScene extends Scene {
       let houses=state.houses
       let flowers=state.flowers
       let wheat=state.wheat
-      trees.push({_id:"1",x:-50,y:200,choppedness:3})
       for (let tree of trees){
         if (!this.treeids.includes(tree._id)){
           this.treeids.push(tree._id)
           let newtree=this.physics.add.staticSprite(tree.x,tree.y,'tree segment').setCircle(50).setScale(1.3).setVisible(false).setOffset(-10,-10)
           newtree.name="tree"
           newtree.falling=1
+          newtree.id=tree._id
+          console.log(newtree)
           this.trees.add(newtree)
         }
       }
@@ -313,6 +422,8 @@ export default class TestScene extends Scene {
           newrock.name="rock"
           newrock.breaking=1
           newrock.alpha=1
+          newrock.id=rock._id
+          console.log(newrock)
           this.rocks.add(newrock)
         }
       }
@@ -321,6 +432,8 @@ export default class TestScene extends Scene {
           this.houseids.push(house._id)
           let newhouse=this.physics.add.staticSprite(house.x,house.y,'house').setBodySize(200, 145).setVisible(false)
           newhouse.name="house"
+          newhouse.id=house._id
+          console.log(newhouse)
           this.houses.add(newhouse)
         }
       }
@@ -330,6 +443,8 @@ export default class TestScene extends Scene {
           let newflower=this.physics.add.staticSprite(flower.x,flower.y,'flower').setBodySize(50, 50).setVisible(false)
           newflower.colour=flower.colour
           newflower.name="flower"
+          newflower.id=flower._id
+          console.log(newflower)
           this.flowers.add(newflower)
         }
       }
@@ -338,6 +453,8 @@ export default class TestScene extends Scene {
           this.wheatids.push(wheat._id)
           let newwheat=this.physics.add.staticSprite(wheat.x,wheat.y,'wheat').setBodySize(60, 60).setVisible(false)
           newwheat.name="wheat"
+          newwheat.id=wheat._id
+          console.log(newwheat)
           this.wheat.add(newwheat)
         }
       }
@@ -370,7 +487,40 @@ export default class TestScene extends Scene {
     })
     this.graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xaa00aa } });
     this.tempSprites = this.add.group();
-  }
+    this.healthtext=this.add.text(10, 10, 'Health', {
+    fontFamily: 'Arial',
+    fontSize: 16,
+    color: '#ffffff'
+  });
+  this.hungertext=this.add.text(10, 10, 'Hunger', {
+  fontFamily: 'Arial',
+  fontSize: 16,
+  color: '#ffffff'
+});
+this.fatiguetext=this.add.text(10, 10, 'Fatigue', {
+fontFamily: 'Arial',
+fontSize: 16,
+color: '#ffffff'
+});
+this.graphics1 = this.add.graphics();
+this.graphics1.fillStyle(0xffffff, 1);
+this.healthbar=this.graphics1.fillRect(0, 0, 150, 20);
+this.graphics2 = this.add.graphics();
+this.graphics2.fillStyle(0xffffff, 1);
+this.fatiguebar=this.graphics2.fillRect(0, 0, 150, 20)
+this.graphics3 = this.add.graphics();
+this.graphics3.fillStyle(0xffffff, 1);
+this.hungerbar=this.graphics3.fillRect(0, 0, 150, 20)
+this.graphics21 = this.add.graphics();
+this.graphics21.fillStyle(0xFF0000, 1);
+this.healthbarvalue=this.graphics21.fillRect(0, 0, 150, 20);
+this.graphics22 = this.add.graphics();
+this.graphics22.fillStyle(0xFF0000, 1);
+this.fatiguebarvalue=this.graphics22.fillRect(0, 0, 150, 20)
+this.graphics23 = this.add.graphics();
+this.graphics23.fillStyle(0xFF0000, 1);
+this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
+}
 
   update(time,delta){
         // this.positiontimer+=1
@@ -381,8 +531,37 @@ export default class TestScene extends Scene {
     this.tempSprites.clear(true,true);
     this.graphics.clear();
     this.player.depth=this.player.y
-    console.log(this.player)
     this.player.setVelocity(0);
+    this.healthtext.x= 10 + this.cameras.main.scrollX
+    this.healthtext.y= 10 + this.cameras.main.scrollY
+    this.healthbar.x= 65 + this.cameras.main.scrollX
+    this.healthbar.y= 10 + this.cameras.main.scrollY
+    this.hungertext.x= 10 + this.cameras.main.scrollX
+    this.hungertext.y= 40 + this.cameras.main.scrollY
+    this.hungerbar.x= 65 + this.cameras.main.scrollX
+    this.hungerbar.y= 40 + this.cameras.main.scrollY
+    this.healthtext.y= 10 + this.cameras.main.scrollY
+    this.fatiguetext.x= 10 + this.cameras.main.scrollX
+    this.fatiguetext.y= 70 + this.cameras.main.scrollY
+    this.fatiguebar.x= 65 + this.cameras.main.scrollX
+    this.fatiguebar.y= 70 + this.cameras.main.scrollY
+    this.healthbarvalue.clear()
+    this.healthbarvalue.fillStyle(0xFF0000, 1)
+    this.healthbarvalue.fillRect(0,0,150/10*this.player.health,20)
+    this.hungerbarvalue.clear()
+    this.hungerbarvalue.fillStyle(0xFF0000, 1)
+    this.hungerbarvalue.fillRect(0,0,150/10*this.player.hunger,20)
+    this.fatiguebarvalue.clear()
+    this.fatiguebarvalue.fillStyle(0xFF0000, 1)
+    this.fatiguebarvalue.fillRect(0,0,150/10*this.player.tiredness,20)
+
+    this.healthbarvalue.x= 65 + this.cameras.main.scrollX
+    this.healthbarvalue.y= 10 + this.cameras.main.scrollY
+    this.hungerbarvalue.x= 65 + this.cameras.main.scrollX
+    this.hungerbarvalue.y= 40 + this.cameras.main.scrollY
+    this.fatiguebarvalue.x= 65 + this.cameras.main.scrollX
+    this.fatiguebarvalue.y= 70 + this.cameras.main.scrollY
+
     let centreX=this.player.x
     let centreY=this.player.y
     let allObjects=[]
@@ -401,7 +580,7 @@ export default class TestScene extends Scene {
     if(this.houses){
       allObjects.push(...this.houses.children.entries)
     }
-    if(allObjects&&this.rocks.children.entries.length>0&&this.trees.children.entries.length>0&&this.wheat.children.entries.length>0&&this.flowers.children.entries.length>0&&this.houses.children.entries.length>0){
+    if(allObjects){
       for(let object of allObjects){
           let distanceFromPlayerX=object.x-centreX
           let distanceFromPlayerY=object.y-centreY
@@ -444,6 +623,9 @@ export default class TestScene extends Scene {
           object.caninteract=true
         }
       }
+      if(object.alpha<0.05){
+        this.destroyObject(object)
+      }
       if(object.caninteract&&this.player.doingaction){
         if(object.name=="tree"&&this.player.axe){
           object.isbeingdestroyed=true
@@ -457,22 +639,18 @@ export default class TestScene extends Scene {
           this.pickAxeHittingSoundFlag=true
         }
         if(object.x<centreX){
-          console.log("falling left")
           object.fallingleft=true
           object.fallx=-1
         }
         if(object.x>=centreX){
-          console.log("falling right")
           object.fallingright=true
           object.fallx=1
         }
         if(object.y<centreY){
-          console.log("falling up")
           object.fallingup=true
           object.fally=-1
         }
         if(object.y>=centreY){
-          console.log("falling down")
           object.fallingdown=true
           object.fally=1
         }

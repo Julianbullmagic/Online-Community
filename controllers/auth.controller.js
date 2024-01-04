@@ -8,8 +8,6 @@ const signin = async (req, res) => {
     let user = await User.findOne({
       "email": { $regex: new RegExp(req.body.email, "i") }
     }).populate('recentprivatemessages')
-    console.log("user")
-console.log(user)
     if (!user)
       return res.status('401').json({
         error: "User not found"
@@ -45,7 +43,7 @@ await User.findByIdAndUpdate(user._id,{$push: {signins: n}}).exec(function(err,d
       user: {_id: user._id, name: user.name,cool:user.cool,coordinates:user.coordinates, email: user.email,events:user.events,
         leads:user.leads,posts:user.posts,polls:user.polls,rules:user.rules,purchases:user.purchases,
         restriction:user.restriction,rulesapproved:user.rulesapproved,restrictionsapproved:user.restrictionsapproved,
-        recentprivatemessages:user.recentprivatemessages}
+        recentprivatemessages:user.recentprivatemessages,health:user.health,hunger:user.hunger,tiredness:user.tiredness}
     })
   } catch (err) {
     console.error(err)

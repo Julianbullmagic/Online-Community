@@ -26,8 +26,13 @@ const User = require("./models/user.model");
 const Tree = require("./models/tree.model");
 const House = require("./models/house.model");
 const Flower = require("./models/flower.model");
-const Wheat = require("./models/Wheat.model");
 const Rock = require("./models/rock.model");
+const Wheat = require("./models/Wheat.model");
+const Chicken = require("./models/chicken.model");
+const Cow = require("./models/cow.model");
+const Bear = require("./models/bear.model");
+const Dragon = require("./models/dragon.model");
+const Spider = require("./models/spider.model");
 const CollectiveInventory = require("./models/collective-inventory.model");
 const Group = require("./models/group.model");
 const Rule = require("./models/rule.model");
@@ -110,61 +115,333 @@ let rocks=[]
 let houses=[]
 let wheat=[]
 let flowers=[]
+let chickens=[]
+let cows=[]
+let spiders=[]
+let dragons=[]
+let bears=[]
 let collectiveInventory=[]
+let collectiveInventoryCopy=[]
 
 
-// let newHouse = new CollectiveInventory({
-//   _id:mongoose.Types.ObjectId(),
-//   wood:1,
-//   iron:1,
-//   copper:1,
-//   stone:1,
-//   fish:1,
-//   grain:1
-// });
-//
-// newHouse.save((err) => {
-//   if(err){
-//     console.log(err)
-//   }else{
-//     console.log("successfully created house")
-//   }
-// })
-//
-//  newHouse = new House({
-//    _id:mongoose.Types.ObjectId(),
-//   x:400,
-//   y:700
-// });
-//
-// newHouse.save((err) => {
-//   if(err){
-//     console.log(err)
-//   }else{
-//     console.log("successfully created house")
-//   }
-// })
+async function resetGameObjects(){
+  await Chicken.deleteMany({}, (err) => {
+    if (err) {
+      console.error('Error removing documents:', err);
+    } else {
+      console.log('All documents removed successfully.');
+    }
+  });
+  await Cow.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
+  await Bear.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
+  await Dragon.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
+  await Spider.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
 
+  await Tree.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
+  await Rock.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
+  await House.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
+  await Wheat.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
+  await Flower.deleteMany({}, (err) => {
+  if (err) {
+    console.error('Error removing documents:', err);
+  } else {
+    console.log('All documents removed successfully.');
+  }
+});
 
+let newobj = new Chicken({
+  _id:mongoose.Types.ObjectId(),
+ x:100,
+ y:1100
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
 
-async function getGameObjects(){
+newobj = new Chicken({
+  _id:mongoose.Types.ObjectId(),
+ x:300,
+ y:1100
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
 
-  trees=await Tree.find().exec()
-  console.log(trees,"trees")
-  rocks=await Rock.find().exec()
-  console.log(rocks,"rocks")
-  houses=await House.find().exec()
-  console.log(houses,"houses")
-  wheat=await Wheat.find().exec()
-  console.log(wheat,"wheat")
-  flowers=await Flower.find().exec()
-  console.log(flowers,"flowers")
+newobj = new Cow({
+  _id:mongoose.Types.ObjectId(),
+ x:500,
+ y:1100
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Cow({
+  _id:mongoose.Types.ObjectId(),
+ x:700,
+ y:1100
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+
+newobj = new Bear({
+  _id:mongoose.Types.ObjectId(),
+ x:100,
+ y:1300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Bear({
+  _id:mongoose.Types.ObjectId(),
+ x:300,
+ y:1300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Spider({
+  _id:mongoose.Types.ObjectId(),
+ x:500,
+ y:1300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Dragon({
+  _id:mongoose.Types.ObjectId(),
+ x:700,
+ y:1300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+
+ newobj = new House({
+   _id:mongoose.Types.ObjectId(),
+  x:100,
+  y:100
+});
+newobj.save((err) => {
+  if(err){
+    console.log(err)
+  }else{
+    console.log("successfully created house")
+  }
+})
+
+newobj = new Tree({
+  _id:mongoose.Types.ObjectId(),
+ x:300,
+ y:100
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Tree({
+  _id:mongoose.Types.ObjectId(),
+ x:500,
+ y:100
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new House({
+  _id:mongoose.Types.ObjectId(),
+ x:700,
+ y:100
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Tree({
+  _id:mongoose.Types.ObjectId(),
+ x:900,
+ y:100
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Rock({
+  _id:mongoose.Types.ObjectId(),
+ x:100,
+ y:300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Rock({
+  _id:mongoose.Types.ObjectId(),
+ x:300,
+ y:300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Flower({
+  _id:mongoose.Types.ObjectId(),
+ x:500,
+ y:300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Flower({
+  _id:mongoose.Types.ObjectId(),
+ x:700,
+ y:300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Wheat({
+  _id:mongoose.Types.ObjectId(),
+ x:900,
+ y:300
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Wheat({
+  _id:mongoose.Types.ObjectId(),
+ x:900,
+ y:600
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+}
+
+async function getInventory(){
   collectiveInventory=await CollectiveInventory.find({_id:"658f30d4e4cbc5097036204d"}).exec()
   console.log(collectiveInventory,"collective inventory")
+  collectiveInventoryCopy=await CollectiveInventory.find({_id:"658f30d4e4cbc5097036204d"}).exec()
+  console.log(collectiveInventoryCopy,"collective inventory copy")
 }
-getGameObjects()
+resetGameObjects()
+getInventory()
 
-// setInterval(saveState, 10000)
+setInterval(saveState, 10000)
 setInterval(sendState, 1000)
 setInterval(checkMovement, 2000)
 
@@ -183,9 +460,9 @@ function checkMovement(){
         if (player.nomovement>150){
           logout(player.id)
         }
-    console.log(player)
+    // console.log(player)
   }
-  console.log(players)
+  // console.log(players)
 }
 
 
@@ -200,9 +477,29 @@ function logout(name){
   io.emit("playing logging out because inactive",JSON.stringify(name))
 }
 
-function sendState(){
-  let gamestate={players:players,trees:trees,rocks:rocks,houses:houses,wheat:wheat,flowers:flowers,collectiveInventory:collectiveInventory[0]}
-  console.log("state",gamestate)
+async function sendState(){
+  trees=await Tree.find().exec()
+  console.log(trees,"trees")
+  rocks=await Rock.find().exec()
+  console.log(rocks,"rocks")
+  houses=await House.find().exec()
+  console.log(houses,"houses")
+  wheat=await Wheat.find().exec()
+  console.log(wheat,"wheat")
+  flowers=await Flower.find().exec()
+  console.log(flowers,"flowers")
+  chickens=await Chicken.find().exec()
+  console.log(chickens,"chickens")
+  cows=await Cow.find().exec()
+  console.log(cows,"cows")
+  bears=await Bear.find().exec()
+  console.log(bears,"bears")
+  spiders=await Spider.find().exec()
+  console.log(spiders,"spiders")
+  dragons=await Dragon.find().exec()
+  console.log(dragons,"dragons")
+  let gamestate={players:players,trees:trees,rocks:rocks,houses:houses,wheat:wheat,flowers:flowers,cows:cows,chickens:chickens,dragons:dragons,bears:bears,spiders:spiders,collectiveInventory:collectiveInventory[0]}
+  console.log("state",gamestate.trees)
   io.emit('updateState',JSON.stringify(gamestate))
 }
 
@@ -544,6 +841,85 @@ socket.on('player joining', (data) => {
   if(!nametaken){
     players.push({id:parseddata.name,x:parseddata.name.x,y:parseddata.y,nomovement:0,moving:false})
   }
+});
+
+socket.on('player equipping tool', (data) => {
+  collectiveInventoryCopy[0][`${data}`]=collectiveInventoryCopy[0][`${data}`]-1
+});
+socket.on('player unequipping tool', (data) => {
+  collectiveInventoryCopy[0][`${data}`]=collectiveInventoryCopy[0][`${data}`]+1
+});
+
+socket.on('remove object', (data) => {
+  for(let tree of trees){
+    Tree.findByIdAndRemove(data, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let rock of rocks){
+    Rock.findByIdAndRemove(data, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let house of houses){
+    House.findByIdAndRemove(data, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let whea of wheat){
+    Wheat.findByIdAndRemove(data, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let flower of flowers){
+    Flower.findByIdAndRemove(data, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  // collectiveInventory=await CollectiveInventory.find({_id:"658f30d4e4cbc5097036204d"}).exec()
+  // console.log(collectiveInventory,"collective inventory")
+  // collectiveInventoryCopy=await CollectiveInventory.find({_id:"658f30d4e4cbc5097036204d"}).exec()
+  // console.log(collectiveInventoryCopy,"collective inventory copy")
 });
 
 socket.on('returning state', (data) => {
