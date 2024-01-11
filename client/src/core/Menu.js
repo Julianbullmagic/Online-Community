@@ -17,10 +17,9 @@ const isActive = (history, path) => {
 const Menu = withRouter(({history}) => (
   <div className="menu" style={{backgroundColor:"#759CC9"}}>
     <h2 className="menutitle">
-        Van Life Social Network
+        Community Online
       </h2>
       <div className="navbuttons">
-      <img style={{width:"7vw",marginLeft:"1vw",transform:"translateY(30%)"}} src={require('./logo.png')} />
       <Link to="/">
         <button style={isActive(history, "/")}>Home</button>
       </Link>

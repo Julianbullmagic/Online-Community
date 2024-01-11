@@ -1,6 +1,6 @@
 import React,{ useCallback, useEffect, useMemo, useState } from 'react';
 import Phaser from 'phaser';
-import TestScene from './TestScene';
+import MainScene from './mainscene';
 
 
 export default function GameComponent() {
@@ -17,7 +17,7 @@ export default function GameComponent() {
       autoRound: true,
       pixelArt: true,
       scene: [
-        TestScene
+        MainScene
       ],
       physics: {
         default: 'arcade',

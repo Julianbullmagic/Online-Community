@@ -1,0 +1,39 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "MMORPGWORLD.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "MMORPGWORLD.tmx": {
+            "expandedGroupLayers": [
+                2
+            ],
+            "scale": 0.75,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 5542,
+                "y": 5721.333333333333
+            }
+        },
+        "MMORPGWORLD.tmx#Animated water tiles": {
+            "scaleInDock": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/Julia/OneDrive/Documents/completed-apps/Community-Online/client/src",
+    "last.imagePath": "C:/Users/Julia/OneDrive/Documents/completed-apps/Community-Online/client/src/groups/assets",
+    "map.height": 500,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 500,
+    "openFiles": [
+        "MMORPGWORLD.tmx"
+    ],
+    "project": "MMORPGWORLD.tiled-project",
+    "recentFiles": [
+        "MMORPGWORLD.tmx"
+    ],
+    "tileset.embedInMap": true
+}

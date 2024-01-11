@@ -1,9 +1,9 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
+const express = require("express")
+const mongoose = require("mongoose")
+const bodyParser = require("body-parser")
 const cors  = require('cors')
 const path = require('path')
-const axios = require('axios');
+const axios = require('axios')
 const compress = require( 'compression')
 const helmet = require( 'helmet')
 const userRoutes = require( './routes/user.routes')
@@ -14,38 +14,40 @@ const groupsRoutes = require( './routes/groups.routes')
 const rulesRoutes = require( './routes/rules.routes')
 const eventsRoutes = require( './routes/events.routes')
 const pollRoutes = require( './routes/polls.routes')
-const fileUpload = require('express-fileupload');
-const cloudinary = require('cloudinary');
+const fileUpload = require('express-fileupload')
+const cloudinary = require('cloudinary')
 const multer=require('multer')
-const { Chat } = require("./models/Chat");
-const { auth } = require("./middleware/auth");
-const cookieParser = require("cookie-parser");
-const fs = require("fs");
-var cron = require('node-cron');
-const User = require("./models/user.model");
-const Tree = require("./models/tree.model");
-const House = require("./models/house.model");
-const Flower = require("./models/flower.model");
-const Rock = require("./models/rock.model");
-const Wheat = require("./models/Wheat.model");
-const Chicken = require("./models/chicken.model");
-const Cow = require("./models/cow.model");
-const Bear = require("./models/bear.model");
-const Dragon = require("./models/dragon.model");
-const Spider = require("./models/spider.model");
-const CollectiveInventory = require("./models/collective-inventory.model");
-const Group = require("./models/group.model");
-const Rule = require("./models/rule.model");
-const Event = require("./models/event.model");
-const Restriction = require("./models/restriction.model");
-const Suggestion = require("./models/suggestion.model");
-const Post = require("./models/post.model");
-const Poll = require("./models/poll.model");
-const RestrictionPoll = require("./models/restrictionpoll.model");
-const Comment = require("./models/comment.model");
+const { Chat } = require("./models/Chat")
+const { auth } = require("./middleware/auth")
+const cookieParser = require("cookie-parser")
+const fs = require("fs")
+var cron = require('node-cron')
+const User = require("./models/user.model")
+const Tree = require("./models/tree.model")
+const House = require("./models/house.model")
+const Flower = require("./models/flower.model")
+const MedicinalHerbs = require("./models/medicinalherbs.model")
+const Rock = require("./models/rock.model")
+const Wheat = require("./models/Wheat.model")
+const Hole = require("./models/hole.model")
+const Chicken = require("./models/chicken.model")
+const Cow = require("./models/cow.model")
+const Bear = require("./models/bear.model")
+const Dragon = require("./models/dragon.model")
+const Spider = require("./models/spider.model")
+const CollectiveInventory = require("./models/collective-inventory.model")
+const Group = require("./models/group.model")
+const Rule = require("./models/rule.model")
+const Event = require("./models/event.model")
+const Restriction = require("./models/restriction.model")
+const Suggestion = require("./models/suggestion.model")
+const Post = require("./models/post.model")
+const Poll = require("./models/poll.model")
+const RestrictionPoll = require("./models/restrictionpoll.model")
+const Comment = require("./models/comment.model")
 const favicon = require("serve-favicon")
-const nodemailer = require('nodemailer');
-// let secure = require('ssl-express-www');
+const nodemailer = require('nodemailer')
+// let secure = require('ssl-express-www')
 
 cloudinary.config({
   cloud_name: process.env.CLOUDNAME,
@@ -114,6 +116,7 @@ let trees=[]
 let rocks=[]
 let houses=[]
 let wheat=[]
+let holes=[]
 let flowers=[]
 let chickens=[]
 let cows=[]
@@ -160,7 +163,6 @@ async function resetGameObjects(){
     console.log('All documents removed successfully.');
   }
 });
-
   await Tree.deleteMany({}, (err) => {
   if (err) {
     console.error('Error removing documents:', err);
@@ -196,11 +198,31 @@ async function resetGameObjects(){
     console.log('All documents removed successfully.');
   }
 });
+await Hole.deleteMany({}, (err) => {
+if (err) {
+  console.error('Error removing documents:', err);
+} else {
+  console.log('All documents removed successfully.');
+}
+});
 
 let newobj = new Chicken({
   _id:mongoose.Types.ObjectId(),
  x:100,
- y:1100
+ y:500,
+ newx:100,
+ newy:500,
+ oldx:100,
+ oldy:500,
+ mode:"Idle",
+ incr:0,
+ updatex:0,
+ updatey:0,
+ xdistlerp:0,
+ ydistlerp:0,
+ attackupdatex:0,
+ attackupdatey:0,
+ health:3
 });
 newobj.save((err) => {
  if(err){
@@ -213,7 +235,20 @@ newobj.save((err) => {
 newobj = new Chicken({
   _id:mongoose.Types.ObjectId(),
  x:300,
- y:1100
+ y:500,
+ newx:300,
+ newy:500,
+ oldx:300,
+ oldy:500,
+ mode:"Idle",
+ incr:0,
+ updatex:0,
+ updatey:0,
+ xdistlerp:0,
+ ydistlerp:0,
+ attackupdatex:0,
+ attackupdatey:0,
+ health:3
 });
 newobj.save((err) => {
  if(err){
@@ -222,11 +257,23 @@ newobj.save((err) => {
    console.log("successfully created house")
  }
 })
-
 newobj = new Cow({
   _id:mongoose.Types.ObjectId(),
- x:500,
- y:1100
+ x:600,
+ y:700,
+ newx:600,
+ newy:700,
+ oldx:600,
+ oldy:700,
+ mode:"Idle",
+ incr:0,
+ updatex:0,
+ updatey:0,
+ xdistlerp:0,
+ ydistlerp:0,
+ attackupdatex:0,
+ attackupdatey:0,
+ health:5
 });
 newobj.save((err) => {
  if(err){
@@ -236,34 +283,72 @@ newobj.save((err) => {
  }
 })
 newobj = new Cow({
-  _id:mongoose.Types.ObjectId(),
- x:700,
- y:1100
-});
-newobj.save((err) => {
- if(err){
-   console.log(err)
- }else{
-   console.log("successfully created house")
- }
-})
-
-newobj = new Bear({
-  _id:mongoose.Types.ObjectId(),
- x:100,
- y:1300
-});
-newobj.save((err) => {
- if(err){
-   console.log(err)
- }else{
-   console.log("successfully created house")
- }
-})
-newobj = new Bear({
   _id:mongoose.Types.ObjectId(),
  x:300,
- y:1300
+ y:500,
+ newx:300,
+ newy:500,
+ oldx:300,
+ oldy:500,
+ mode:"Idle",
+ incr:0,
+ updatex:0,
+ updatey:0,
+ xdistlerp:0,
+ ydistlerp:0,
+ attackupdatex:0,
+ attackupdatey:0,
+ health:5
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Bear({
+  _id:mongoose.Types.ObjectId(),
+ x:600,
+ y:700,
+ newx:600,
+ newy:700,
+ oldx:600,
+ oldy:700,
+ mode:"Idle",
+ incr:0,
+ updatex:0,
+ updatey:0,
+ xdistlerp:0,
+ ydistlerp:0,
+ attackupdatex:0,
+ attackupdatey:0,
+ health:7
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Bear({
+  _id:mongoose.Types.ObjectId(),
+ x:700,
+ y:700,
+ newx:700,
+ newy:700,
+ oldx:700,
+ oldy:700,
+ mode:"Idle",
+ incr:0,
+ updatex:0,
+ updatey:0,
+ xdistlerp:0,
+ ydistlerp:0,
+ attackupdatex:0,
+ attackupdatey:0,
+ health:7
 });
 newobj.save((err) => {
  if(err){
@@ -274,8 +359,21 @@ newobj.save((err) => {
 })
 newobj = new Spider({
   _id:mongoose.Types.ObjectId(),
- x:500,
- y:1300
+ x:700,
+ y:800,
+ newx:700,
+ newy:800,
+ oldx:700,
+ oldy:800,
+ mode:"Idle",
+ incr:0,
+ updatex:0,
+ updatey:0,
+ xdistlerp:0,
+ ydistlerp:0,
+ attackupdatex:0,
+ attackupdatey:0,
+ health:10
 });
 newobj.save((err) => {
  if(err){
@@ -286,21 +384,35 @@ newobj.save((err) => {
 })
 newobj = new Dragon({
   _id:mongoose.Types.ObjectId(),
- x:700,
- y:1300
+ x:800,
+ y:800,
+ newx:800,
+ newy:800,
+ oldx:800,
+ oldy:800,
+ mode:"Idle",
+ incr:0,
+ updatex:0,
+ updatey:0,
+ xdistlerp:0,
+ ydistlerp:0,
+ attackupdatex:0,
+ attackupdatey:0,
+ health:15
 });
 newobj.save((err) => {
  if(err){
    console.log(err)
  }else{
-   console.log("successfully created house")
+   console.log("successfully created Dragon")
  }
 })
 
  newobj = new House({
    _id:mongoose.Types.ObjectId(),
   x:100,
-  y:100
+  y:100,
+  health:15
 });
 newobj.save((err) => {
   if(err){
@@ -309,11 +421,16 @@ newobj.save((err) => {
     console.log("successfully created house")
   }
 })
-
+let rotator=`${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()}`
 newobj = new Tree({
   _id:mongoose.Types.ObjectId(),
  x:300,
- y:100
+ y:100,
+ hasseeds:true,
+ countdowntoreplenish:180,
+ fruit:"apple",
+ rotator:rotator,
+ health:5
 });
 newobj.save((err) => {
  if(err){
@@ -322,10 +439,51 @@ newobj.save((err) => {
    console.log("successfully created house")
  }
 })
+rotator=`${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()}`
+newobj = new Tree({
+  _id:mongoose.Types.ObjectId(),
+ x:300,
+ y:600,
+ fruit:"apple",
+ hasseeds:true,
+ countdowntoreplenish:180,
+ rotator:rotator,
+ health:5
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+rotator=`${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()}`
+newobj = new Tree({
+  _id:mongoose.Types.ObjectId(),
+ x:300,
+ y:500,
+ hasseeds:true,
+ countdowntoreplenish:180,
+ rotator:rotator,
+ fruit:"orange",
+ health:5
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+rotator=`${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()}`
 newobj = new Tree({
   _id:mongoose.Types.ObjectId(),
  x:500,
- y:100
+ y:100, 
+ hasseeds:true,
+ countdowntoreplenish:180,
+ rotator:rotator,
+ health:5
 });
 newobj.save((err) => {
  if(err){
@@ -337,7 +495,8 @@ newobj.save((err) => {
 newobj = new House({
   _id:mongoose.Types.ObjectId(),
  x:700,
- y:100
+ y:100,
+ health:15
 });
 newobj.save((err) => {
  if(err){
@@ -346,10 +505,15 @@ newobj.save((err) => {
    console.log("successfully created house")
  }
 })
+rotator=`${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()},${Math.random()}`
 newobj = new Tree({
   _id:mongoose.Types.ObjectId(),
  x:900,
- y:100
+ y:100,
+ hasseeds:true,
+ countdowntoreplenish:180,
+ rotator:rotator,
+ health:5
 });
 newobj.save((err) => {
  if(err){
@@ -361,7 +525,8 @@ newobj.save((err) => {
 newobj = new Rock({
   _id:mongoose.Types.ObjectId(),
  x:100,
- y:300
+ y:300,
+ health:8
 });
 newobj.save((err) => {
  if(err){
@@ -373,8 +538,54 @@ newobj.save((err) => {
 newobj = new Rock({
   _id:mongoose.Types.ObjectId(),
  x:300,
- y:300
+ y:300,
+ health:8
 });
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new MedicinalHerbs({
+  _id:mongoose.Types.ObjectId(),
+ x:600,
+ y:400,
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:2
+})
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new MedicinalHerbs({
+  _id:mongoose.Types.ObjectId(),
+ x:500,
+ y:400,
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:2
+})
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new MedicinalHerbs({
+  _id:mongoose.Types.ObjectId(),
+ x:700,
+ y:400,
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:2
+})
 newobj.save((err) => {
  if(err){
    console.log(err)
@@ -385,7 +596,27 @@ newobj.save((err) => {
 newobj = new Flower({
   _id:mongoose.Types.ObjectId(),
  x:500,
- y:300
+ y:300,
+ colour:"red",
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:2
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Flower({
+  _id:mongoose.Types.ObjectId(),
+ x:600,
+ y:300,
+ colour:"white",
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:2
 });
 newobj.save((err) => {
  if(err){
@@ -397,7 +628,27 @@ newobj.save((err) => {
 newobj = new Flower({
   _id:mongoose.Types.ObjectId(),
  x:700,
- y:300
+ y:300,
+ colour:"yellow",
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:2
+});
+newobj.save((err) => {
+ if(err){
+   console.log(err)
+ }else{
+   console.log("successfully created house")
+ }
+})
+newobj = new Flower({
+  _id:mongoose.Types.ObjectId(),
+ x:700,
+ y:300,
+ colour:"purple",
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:2
 });
 newobj.save((err) => {
  if(err){
@@ -409,7 +660,10 @@ newobj.save((err) => {
 newobj = new Wheat({
   _id:mongoose.Types.ObjectId(),
  x:900,
- y:300
+ y:300,
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:3
 });
 newobj.save((err) => {
  if(err){
@@ -421,7 +675,10 @@ newobj.save((err) => {
 newobj = new Wheat({
   _id:mongoose.Types.ObjectId(),
  x:900,
- y:600
+ y:600,
+ hasseeds:true,
+ countdowntoreplenish:120,
+ health:3
 });
 newobj.save((err) => {
  if(err){
@@ -441,13 +698,8 @@ async function getInventory(){
 resetGameObjects()
 getInventory()
 
-setInterval(saveState, 10000)
-setInterval(sendState, 1000)
+setInterval(sendState, 2000)
 setInterval(checkMovement, 2000)
-
-function saveState(){
-  console.log("saving state")
-}
 
 function checkMovement(){
   for (let player of players){
@@ -478,29 +730,301 @@ function logout(name){
 }
 
 async function sendState(){
+  holes=await Hole.find().exec()
+  console.log(holes,"SENDING HOLES")
   trees=await Tree.find().exec()
-  console.log(trees,"trees")
   rocks=await Rock.find().exec()
-  console.log(rocks,"rocks")
   houses=await House.find().exec()
-  console.log(houses,"houses")
   wheat=await Wheat.find().exec()
-  console.log(wheat,"wheat")
   flowers=await Flower.find().exec()
-  console.log(flowers,"flowers")
   chickens=await Chicken.find().exec()
-  console.log(chickens,"chickens")
   cows=await Cow.find().exec()
-  console.log(cows,"cows")
   bears=await Bear.find().exec()
-  console.log(bears,"bears")
   spiders=await Spider.find().exec()
-  console.log(spiders,"spiders")
   dragons=await Dragon.find().exec()
-  console.log(dragons,"dragons")
-  let gamestate={players:players,trees:trees,rocks:rocks,houses:houses,wheat:wheat,flowers:flowers,cows:cows,chickens:chickens,dragons:dragons,bears:bears,spiders:spiders,collectiveInventory:collectiveInventory[0]}
-  console.log("state",gamestate.trees)
+  collectiveInventory=await CollectiveInventory.find({_id:"658f30d4e4cbc5097036204d"}).exec()
+  collectiveInventoryCopy=await CollectiveInventory.find({_id:"658f30d4e4cbc5097036204d"}).exec()
+
+  for (let cow of cows){
+    cow.updatex=50-Math.random()*100
+    cow.updatey=50-Math.random()*100
+    let increment=cow.incr+1
+let shortestdistance=10000000
+cow.mode="Idle"
+for(let player of players){
+  let distancefromplayer=Math.sqrt((player.x-cow.newx)*(player.x-cow.newx)+(player.y-cow.newy)*(player.y-cow.newy))
+  if(distancefromplayer<150){
+    cow.mode="Attack"
+    if(distancefromplayer<shortestdistance){
+      distancefromplayer=shortestdistance
+      let directionX = player.x - cow.newx
+      let directionY = player.y - cow.newy
+      let distance = Math.sqrt(directionX * directionX + directionY * directionY)
+      cow.updatex = directionX/distance*60
+      cow.updatey = directionY/distance*60
+    }
+  }
+}
+cow.oldx=cow.newx
+cow.oldy=cow.newy
+let potentialnewx=cow.newx+cow.updatex
+let potentialnewy=cow.newy+cow.updatey
+let xdistorigin=potentialnewx-cow.x
+let ydistorigin=potentialnewy-cow.y
+let xdistnewpoint=potentialnewx-cow.newx
+let ydistnewpoint=potentialnewy-cow.newy
+let distancetonewpointfromcentre=Math.sqrt((xdistorigin*xdistorigin)+(ydistorigin*ydistorigin))
+if(distancetonewpointfromcentre<300){
+  cow.xdistlerp=xdistnewpoint/120
+  cow.ydistlerp=ydistnewpoint/120
+  cow.newx+=cow.updatex
+  cow.newy+=cow.updatey
+}
+if(distancetonewpointfromcentre>=300){
+  cow.xdistlerp=-xdistnewpoint/120
+  cow.ydistlerp=-ydistnewpoint/120
+  cow.newx-=cow.updatex
+  cow.newy-=cow.updatey
+}
+Cow.findByIdAndUpdate(
+cow._id,
+{incr:increment,oldx:cow.oldx,oldy:cow.oldy,newx:cow.newx,newy:cow.newy,xdistlerp:cow.xdistlerp,ydistlerp:cow.ydistlerp},
+{new:true,useFindAndModify: false },
+(err, updatedDocument) => {
+if (err) {
+  console.error('Error updating document:', err);
+} else {
+  // console.log('Updated document:', updatedDocument);
+}
+}
+)
+  }
+  for (let chicken of chickens){
+    chicken.updatex=50-Math.random()*100
+    chicken.updatey=50-Math.random()*100
+    let increment=chicken.incr+1
+let shortestdistance=10000000
+chicken.mode="Idle"
+for(let player of players){
+  let distancefromplayer=Math.sqrt((player.x-chicken.newx)*(player.x-chicken.newx)+(player.y-chicken.newy)*(player.y-chicken.newy))
+  if(distancefromplayer<150){
+    chicken.mode="Attack"
+    if(distancefromplayer<shortestdistance){
+      distancefromplayer=shortestdistance
+      let directionX = player.x - chicken.newx
+      let directionY = player.y - chicken.newy
+      let distance = Math.sqrt(directionX * directionX + directionY * directionY)
+      chicken.updatex = directionX/distance*60
+      chicken.updatey = directionY/distance*60
+    }
+  }
+}
+chicken.oldx=chicken.newx
+chicken.oldy=chicken.newy
+let potentialnewx=chicken.newx+chicken.updatex
+let potentialnewy=chicken.newy+chicken.updatey
+let xdistorigin=potentialnewx-chicken.x
+let ydistorigin=potentialnewy-chicken.y
+let xdistnewpoint=potentialnewx-chicken.newx
+let ydistnewpoint=potentialnewy-chicken.newy
+let distancetonewpointfromcentre=Math.sqrt((xdistorigin*xdistorigin)+(ydistorigin*ydistorigin))
+if(distancetonewpointfromcentre<300){
+  chicken.xdistlerp=xdistnewpoint/120
+  chicken.ydistlerp=ydistnewpoint/120
+  chicken.newx+=chicken.updatex
+  chicken.newy+=chicken.updatey
+}
+if(distancetonewpointfromcentre>=300){
+  chicken.xdistlerp=-xdistnewpoint/120
+  chicken.ydistlerp=-ydistnewpoint/120
+  chicken.newx-=chicken.updatex
+  chicken.newy-=chicken.updatey
+}
+Chicken.findByIdAndUpdate(
+chicken._id,
+{incr:increment,oldx:chicken.oldx,oldy:chicken.oldy,newx:chicken.newx,newy:chicken.newy,xdistlerp:chicken.xdistlerp,ydistlerp:chicken.ydistlerp},
+{new:true,useFindAndModify: false },
+(err, updatedDocument) => {
+if (err) {
+  console.error('Error updating document:', err);
+} else {
+  // console.log('Updated document:', updatedDocument);
+}
+}
+)
+  }
+  for (let bear of bears){
+    bear.updatex=50-Math.random()*100
+    bear.updatey=50-Math.random()*100
+    let increment=bear.incr+1
+let shortestdistance=10000000
+bear.mode="Idle"
+for(let player of players){
+  let distancefromplayer=Math.sqrt((player.x-bear.newx)*(player.x-bear.newx)+(player.y-bear.newy)*(player.y-bear.newy))
+  if(distancefromplayer<150){
+    bear.mode="Attack"
+    if(distancefromplayer<shortestdistance){
+      distancefromplayer=shortestdistance
+      let directionX = player.x - bear.newx
+      let directionY = player.y - bear.newy
+      let distance = Math.sqrt(directionX * directionX + directionY * directionY)
+      bear.updatex = directionX/distance*60
+      bear.updatey = directionY/distance*60
+    }
+  }
+}
+bear.oldx=bear.newx
+bear.oldy=bear.newy
+let potentialnewx=bear.newx+bear.updatex
+let potentialnewy=bear.newy+bear.updatey
+let xdistorigin=potentialnewx-bear.x
+let ydistorigin=potentialnewy-bear.y
+let xdistnewpoint=potentialnewx-bear.newx
+let ydistnewpoint=potentialnewy-bear.newy
+let distancetonewpointfromcentre=Math.sqrt((xdistorigin*xdistorigin)+(ydistorigin*ydistorigin))
+if(distancetonewpointfromcentre<300){
+  bear.xdistlerp=xdistnewpoint/120
+  bear.ydistlerp=ydistnewpoint/120
+  bear.newx+=bear.updatex
+  bear.newy+=bear.updatey
+}
+if(distancetonewpointfromcentre>=300){
+  bear.xdistlerp=-xdistnewpoint/120
+  bear.ydistlerp=-ydistnewpoint/120
+  bear.newx-=bear.updatex
+  bear.newy-=bear.updatey
+}
+Bear.findByIdAndUpdate(
+bear._id,
+{incr:increment,oldx:bear.oldx,oldy:bear.oldy,newx:bear.newx,newy:bear.newy,xdistlerp:bear.xdistlerp,ydistlerp:bear.ydistlerp},
+{new:true,useFindAndModify: false },
+(err, updatedDocument) => {
+if (err) {
+  console.error('Error updating document:', err);
+} else {
+  // console.log('Updated document:', updatedDocument);
+}
+}
+)
+  }
+
+  for (let dragon of dragons){
+    dragon.updatex=50-Math.random()*100
+    dragon.updatey=50-Math.random()*100
+    let increment=dragon.incr+1
+let shortestdistance=10000000
+dragon.mode="Idle"
+for(let player of players){
+  let distancefromplayer=Math.sqrt((player.x-dragon.newx)*(player.x-dragon.newx)+(player.y-dragon.newy)*(player.y-dragon.newy))
+  if(distancefromplayer<150){
+    dragon.mode="Attack"
+    if(distancefromplayer<shortestdistance){
+      distancefromplayer=shortestdistance
+      let directionX = player.x - dragon.newx
+      let directionY = player.y - dragon.newy
+      let distance = Math.sqrt(directionX * directionX + directionY * directionY)
+      dragon.updatex = directionX/distance*60
+      dragon.updatey = directionY/distance*60
+    }
+  }
+}
+dragon.oldx=dragon.newx
+dragon.oldy=dragon.newy
+let potentialnewx=dragon.newx+dragon.updatex
+let potentialnewy=dragon.newy+dragon.updatey
+let xdistorigin=potentialnewx-dragon.x
+let ydistorigin=potentialnewy-dragon.y
+let xdistnewpoint=potentialnewx-dragon.newx
+let ydistnewpoint=potentialnewy-dragon.newy
+let distancetonewpointfromcentre=Math.sqrt((xdistorigin*xdistorigin)+(ydistorigin*ydistorigin))
+if(distancetonewpointfromcentre<300){
+  dragon.xdistlerp=xdistnewpoint/120
+  dragon.ydistlerp=ydistnewpoint/120
+  dragon.newx+=dragon.updatex
+  dragon.newy+=dragon.updatey
+}
+if(distancetonewpointfromcentre>=300){
+  dragon.xdistlerp=-xdistnewpoint/120
+  dragon.ydistlerp=-ydistnewpoint/120
+  dragon.newx-=dragon.updatex
+  dragon.newy-=dragon.updatey
+}
+Dragon.findByIdAndUpdate(
+dragon._id,
+{incr:increment,oldx:dragon.oldx,oldy:dragon.oldy,newx:dragon.newx,newy:dragon.newy,xdistlerp:dragon.xdistlerp,ydistlerp:dragon.ydistlerp},
+{new:true,useFindAndModify: false },
+(err, updatedDocument) => {
+if (err) {
+  console.error('Error updating document:', err);
+} else {
+  // console.log('Updated document:', updatedDocument);
+}
+}
+)
+}
+
+for (let spider of spiders){
+  spider.updatex=50-Math.random()*100
+  spider.updatey=50-Math.random()*100
+  let increment=spider.incr+1
+let shortestdistance=10000000
+spider.mode="Idle"
+for(let player of players){
+let distancefromplayer=Math.sqrt((player.x-spider.newx)*(player.x-spider.newx)+(player.y-spider.newy)*(player.y-spider.newy))
+if(distancefromplayer<150){
+  spider.mode="Attack"
+  if(distancefromplayer<shortestdistance){
+    distancefromplayer=shortestdistance
+    let directionX = player.x - spider.newx
+    let directionY = player.y - spider.newy
+    let distance = Math.sqrt(directionX * directionX + directionY * directionY)
+    spider.updatex = directionX/distance*60
+    spider.updatey = directionY/distance*60
+  }
+}
+}
+spider.oldx=spider.newx
+spider.oldy=spider.newy
+let potentialnewx=spider.newx+spider.updatex
+let potentialnewy=spider.newy+spider.updatey
+let xdistorigin=potentialnewx-spider.x
+let ydistorigin=potentialnewy-spider.y
+let xdistnewpoint=potentialnewx-spider.newx
+let ydistnewpoint=potentialnewy-spider.newy
+let distancetonewpointfromcentre=Math.sqrt((xdistorigin*xdistorigin)+(ydistorigin*ydistorigin))
+if(distancetonewpointfromcentre<300){
+spider.xdistlerp=xdistnewpoint/120
+spider.ydistlerp=ydistnewpoint/120
+spider.newx+=spider.updatex
+spider.newy+=spider.updatey
+}
+if(distancetonewpointfromcentre>=300){
+spider.xdistlerp=-xdistnewpoint/120
+spider.ydistlerp=-ydistnewpoint/120
+spider.newx-=spider.updatex
+spider.newy-=spider.updatey
+}
+Spider.findByIdAndUpdate(
+spider._id,
+{incr:increment,oldx:spider.oldx,oldy:spider.oldy,newx:spider.newx,newy:spider.newy,xdistlerp:spider.xdistlerp,ydistlerp:spider.ydistlerp},
+{new:true,useFindAndModify: false },
+(err, updatedDocument) => {
+if (err) {
+console.error('Error updating document:', err);
+} else {
+// console.log('Updated document:', updatedDocument);
+}
+}
+)
+}
+  let gamestate={players:players,trees:trees,rocks:rocks,houses:houses,wheat:wheat,flowers:flowers,cows:cows,chickens:chickens,dragons:dragons,bears:bears,spiders:spiders,
+    holes:holes,collectiveInventory:collectiveInventory[0],collectiveInventoryCopy:collectiveInventoryCopy[0]}
   io.emit('updateState',JSON.stringify(gamestate))
+}
+
+
+function getRandomFloatBetween(min, max) {
+  return Math.random() * (max - min) + min;
 }
 
 const MILLISECONDS_IN_A_MONTH=2629800000
@@ -849,10 +1373,155 @@ socket.on('player equipping tool', (data) => {
 socket.on('player unequipping tool', (data) => {
   collectiveInventoryCopy[0][`${data}`]=collectiveInventoryCopy[0][`${data}`]+1
 });
+socket.on('hole dug', (data) => {
+  let newhole = new Hole({
+    _id:mongoose.Types.ObjectId(),
+   x:data.x,
+   y:data.y,
+  })
+  console.log('digging hole',newhole)
+   newhole.save((err) => {
+   if(err){
+     console.log(err)
+   }else{
+     console.log("successfully created hole")
+   }
+  })
+})
 
+socket.on('gather seeds or fruit', (data) => {
+  console.log(data,"DATA REMOVING OBJECT")
+  let toaddtoinventory=data.toaddtoinventory
+  toaddtoinventory=toaddtoinventory.split(',')
+  toaddtoinventory=[...toaddtoinventory]
+  console.log(toaddtoinventory)
+  for (let item of toaddtoinventory){
+    let parts=item.split("-")
+    let particularitem=parts[1]
+    let quantity=Number(parts[0])
+    console.log(particularitem,quantity)
+    let updateObject = {};
+    updateObject[`${particularitem}`] = quantity;
+    CollectiveInventory.findByIdAndUpdate(
+    "658f30d4e4cbc5097036204d",
+    { $inc: updateObject },
+    {new:true,useFindAndModify: false },
+    (err, updatedDocument) => {
+    if (err) {
+    console.error('Error updating document:', err);
+    } else {
+    // console.log('Updated document:', updatedDocument);
+    }
+    }
+    )
+  }
+})
 socket.on('remove object', (data) => {
+  console.log(data,"DATA REMOVING OBJECT")
+  let toaddtoinventory=data.toaddtoinventory
+  toaddtoinventory=toaddtoinventory.split(',')
+  toaddtoinventory=[...toaddtoinventory]
+  console.log(toaddtoinventory)
+  for (let item of toaddtoinventory){
+    let parts=item.split("-")
+    let particularitem=parts[1]
+    let quantity=Number(parts[0])
+    console.log(particularitem,quantity)
+    let updateObject = {};
+    updateObject[`${particularitem}`] = quantity;
+    CollectiveInventory.findByIdAndUpdate(
+    "658f30d4e4cbc5097036204d",
+    { $inc: updateObject },
+    {new:true,useFindAndModify: false },
+    (err, updatedDocument) => {
+    if (err) {
+    console.error('Error updating document:', err);
+    } else {
+    // console.log('Updated document:', updatedDocument);
+    }
+    }
+    )
+  }
+  for(let hole of holes){
+    Hole.findByIdAndRemove(data.id, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let dragon of dragons){
+    Dragon.findByIdAndRemove(data.id, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let spider of spiders){
+    Spider.findByIdAndRemove(data.id, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let bear of bears){
+    Bear.findByIdAndRemove(data.id, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let chicken of chickens){
+    Chicken.findByIdAndRemove(data.id, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
+  for(let cow of cows){
+    Cow.findByIdAndRemove(data.id, (err, removedDocument) => {
+      if (err) {
+        console.error('Error deleting document:', err);
+      } else {
+        if (removedDocument) {
+          console.log('Document removed successfully:', removedDocument);
+        } else {
+          console.log('Document not found.');
+        }
+      }
+    });
+  }
   for(let tree of trees){
-    Tree.findByIdAndRemove(data, (err, removedDocument) => {
+    Tree.findByIdAndRemove(data.id, (err, removedDocument) => {
       if (err) {
         console.error('Error deleting document:', err);
       } else {
@@ -865,7 +1534,7 @@ socket.on('remove object', (data) => {
     });
   }
   for(let rock of rocks){
-    Rock.findByIdAndRemove(data, (err, removedDocument) => {
+    Rock.findByIdAndRemove(data.id, (err, removedDocument) => {
       if (err) {
         console.error('Error deleting document:', err);
       } else {
@@ -878,7 +1547,7 @@ socket.on('remove object', (data) => {
     });
   }
   for(let house of houses){
-    House.findByIdAndRemove(data, (err, removedDocument) => {
+    House.findByIdAndRemove(data.id, (err, removedDocument) => {
       if (err) {
         console.error('Error deleting document:', err);
       } else {
@@ -891,7 +1560,7 @@ socket.on('remove object', (data) => {
     });
   }
   for(let whea of wheat){
-    Wheat.findByIdAndRemove(data, (err, removedDocument) => {
+    Wheat.findByIdAndRemove(data.id, (err, removedDocument) => {
       if (err) {
         console.error('Error deleting document:', err);
       } else {
@@ -904,7 +1573,7 @@ socket.on('remove object', (data) => {
     });
   }
   for(let flower of flowers){
-    Flower.findByIdAndRemove(data, (err, removedDocument) => {
+    Flower.findByIdAndRemove(data.id, (err, removedDocument) => {
       if (err) {
         console.error('Error deleting document:', err);
       } else {
@@ -920,7 +1589,7 @@ socket.on('remove object', (data) => {
   // console.log(collectiveInventory,"collective inventory")
   // collectiveInventoryCopy=await CollectiveInventory.find({_id:"658f30d4e4cbc5097036204d"}).exec()
   // console.log(collectiveInventoryCopy,"collective inventory copy")
-});
+})
 
 socket.on('returning state', (data) => {
   let parseddata=JSON.parse(data)
@@ -928,8 +1597,8 @@ socket.on('returning state', (data) => {
     if(parseddata.id==player.id){
       player.x=parseddata.x
       player.y=parseddata.y
-      player.moving=parseddata.moving
-      player.direction=parseddata.direction
+      // player.moving=parseddata.moving
+      // player.direction=parseddata.direction
     }
   }
 });
@@ -985,7 +1654,6 @@ console.log(allrooms)
 
 
   socket.on("Input Chat Message To User", msg => {
-
     connect.then(db => {
       try {
         var d = new Date();

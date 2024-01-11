@@ -61,8 +61,7 @@ const animations = {
     // 'runwithswordbrownhairfront': "https://res.cloudinary.com/dfksh5mnb/image/upload/v1703651907/run_whit_sword_front_xq86b4.png",
     // 'runwithswordbrownhairback': "https://res.cloudinary.com/dfksh5mnb/image/upload/v1703651904/run_whit_sword_back_rhfdwu.png",
     // 'strugglingwiththefishbrownhairfront': "https://res.cloudinary.com/dfksh5mnb/image/upload/v1703651910/struggling_whit_the_fish_front_uhh8oa.png",
-    'throwingfishingrodbrownhairfront': "https://res.cloudinary.com/dfksh5mnb/image/upload/v1703651912/throwing_fishing_rod_front_ritizd.png"
-};
+}
 
 
 export default class TestScene extends Scene {
@@ -94,6 +93,18 @@ export default class TestScene extends Scene {
     this.collectiveInventory={}
     this.positiontimer=0
     this.incr=0
+    this.hitting=""
+    this.hitbearflag=false
+    this.hitchickenflag=false
+    this.hitspiderflag=false
+    this.hitdragonflag=false
+    this.hitcowflag=false
+    this.hittreeflag=false
+    this.hitrockflag=false
+    this.hithouseflag=false
+    this.hitwheatflag=false
+    this.hitflowerflag=false
+    this.sendstate=this.sendstate.bind(this)
   }
 
   shutdown() {
@@ -105,8 +116,8 @@ export default class TestScene extends Scene {
       "x": Math.round(x),
       "y": Math.round(y),
       "id":id,
-      "moving":moving,
-      "direction":direction
+      // "moving":moving,
+      // "direction":direction
     }
     socket.emit('returning state', JSON.stringify(playerdata))
   }
@@ -115,7 +126,6 @@ export default class TestScene extends Scene {
     // this.load.image('map image',mapimage)
     // this.load.tilemapTiledJSON('map data',json)
     for (const [animationName, spritesheet] of Object.entries(animations)) {
-      console.log(animationName, animations[`${animationName}`])
     if(animationName.includes("fish")){
       this.load.spritesheet(animationName, animations[`${animationName}`], { frameWidth: 64, frameHeight: 64 });
     }else{
@@ -123,6 +133,11 @@ export default class TestScene extends Scene {
     }
 }
 
+    this.load.spritesheet('cow',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1704328238/cows_ywbkba.png",{frameWidth:48,frameHeight:48})
+    this.load.spritesheet('chicken',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1704328237/chicken_wxeqws.png",{frameWidth:48,frameHeight:48})
+    this.load.spritesheet('bear',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1704326973/AsSFtpV_cckgyk.png",{frameWidth:48,frameHeight:48})
+    this.load.spritesheet('spider',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1704494955/Spider1_sgq2xs.png",{frameWidth:52,frameHeight:50})
+    this.load.spritesheet('dragon',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1704534878/flying_dragon-red_tt6y85.png",{frameWidth:192,frameHeight:161})
     this.load.spritesheet('rock breaking segment 3 frame 2',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1703885197/rock2layer3breaking3_kp97tt.png",{frameWidth:180,frameHeight:194})
     this.load.spritesheet('rock breaking segment 3 frame 1',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1703885197/rock2layer3breaking2_x7e8c4.png",{frameWidth:180,frameHeight:194})
     this.load.spritesheet('rock breaking segment 2 frame 1',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1703885197/rock2layer2breaking1_ikczma.png",{frameWidth:180,frameHeight:194})
@@ -158,45 +173,44 @@ export default class TestScene extends Scene {
     this.load.spritesheet('rock',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1703652883/rock_opfhgc.png",{frameWidth:180,frameHeight:194})
     this.load.spritesheet('tree',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1703652888/tree_n6kyuy.png",{frameWidth:96,frameHeight:250})
     this.load.spritesheet('house',"https://res.cloudinary.com/dfksh5mnb/image/upload/v1703652895/house_eds3ey.png",{frameWidth:150,frameHeight:150})
-    this.load.image("grass",'https://res.cloudinary.com/dfksh5mnb/image/upload/v1703637696/grass_caru0u.png');
+    this.load.image("grass",'https://res.cloudinary.com/dfksh5mnb/image/upload/v1703637696/grass_caru0u.png')
 
-    this.load.audio('tree falling', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704003187/Voicy_Tree_Falling_Down_Fast_lfajlk.mp3');
-    this.load.audio('rock smash', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/rock-smash_xa3zxn.mp3');
-    this.load.audio('swoosh', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/clean-fast-swooshaiff-14784_uqjep5.mp3');
-    this.load.audio('digging', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062485/420876__inspectorj__digging-ice-hammer-c_dv6fmq.wav');
-    this.load.audio('pickaxe hits rock', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/638696__captainyulef__pickaxe_edjpig.wav');
-    this.load.audio('axe hits tree', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/421929__micahlg__chopping-wood-02_esxrmr.wav');
+    this.load.audio('tree falling', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704003187/Voicy_Tree_Falling_Down_Fast_lfajlk.mp3')
+    this.load.audio('rock smash', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/rock-smash_xa3zxn.mp3')
+    this.load.audio('swoosh', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/clean-fast-swooshaiff-14784_uqjep5.mp3')
+    this.load.audio('digging', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062485/420876__inspectorj__digging-ice-hammer-c_dv6fmq.wav')
+    this.load.audio('pickaxe hits rock', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704062484/638696__captainyulef__pickaxe_edjpig.wav')
+    this.load.audio('axe hits tree', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704542384/audiomass-output_1_u1s6wt.mp3')
+    this.load.audio('chicken screaming', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704534475/413823__henlord__chicken-scream-soft_zxa6im.wav')
+    this.load.audio('dragon roar', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704534470/713920__scpsea__t-rex-dragon-roar_jeqwwu.wav')
+    this.load.audio('bear roar', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704534470/49127__aesqe__monster_growl_01_dc7l5i.wav')
+    this.load.audio('spider roar', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704534470/672712__kongg__spider-attack-2_gdpeny.mp3')
+    this.load.audio('cow mooing', 'https://res.cloudinary.com/dfksh5mnb/video/upload/v1704537479/57791__reinsamba__1192_cow_close_t8fyrb.wav')
   }
 
   destroyObject(object) {
-    console.log("Removing object", object);
-
-    // Log the current group memberships
-    console.log("Trees group contains:", this.trees.contains(object));
-    console.log("Rocks group contains:", this.rocks.contains(object));
-    console.log("Houses group contains:", this.houses.contains(object));
-    console.log("Flowers group contains:", this.flowers.contains(object));
-    console.log("Wheat group contains:", this.wheat.contains(object));
-
     socket.emit('remove object', object.id);
-
-    // Remove the object from the appropriate group
     if (this.trees.contains(object)) {
       this.trees.remove(object, true, true);
-      console.log("Object removed from Trees group");
     } else if (this.rocks.contains(object)) {
       this.rocks.remove(object, true, true);
-      console.log("Object removed from Rocks group");
     } else if (this.houses.contains(object)) {
       this.houses.remove(object, true, true);
-      console.log("Object removed from Houses group");
     } else if (this.flowers.contains(object)) {
       this.flowers.remove(object, true, true);
-      console.log("Object removed from Flowers group");
     } else if (this.wheat.contains(object)) {
       this.wheat.remove(object, true, true);
-      console.log("Object removed from Wheat group");
-    } else {
+    } else if (this.cows.contains(object)) {
+      this.cows.remove(object, true, true);
+    } else if (this.chickens.contains(object)) {
+      this.chickens.remove(object, true, true);
+    } else if (this.bears.contains(object)) {
+      this.bears.remove(object, true, true);
+    } else if (this.spiders.contains(object)) {
+      this.spiders.remove(object, true, true);
+    } else if (this.dragons.contains(object)) {
+        this.dragons.remove(object, true, true);
+      } else {
       console.log("Object not found in any group");
     }
   }
@@ -244,6 +258,9 @@ export default class TestScene extends Scene {
     this.player.pickaxe=true
     this.player.fishingrod=false
     this.player.shovel=false
+    this.player.hittingbear=false
+    this.player.hittingspider=false
+    this.player.hittingdragon=false
     let tool=localStorage.getItem("equipped tool")
     if(!tool){
       this.player.axe=false
@@ -302,15 +319,77 @@ export default class TestScene extends Scene {
       this.player.shovel=true
     }
     this.player.setScale(3);
-    this.physics.add.collider(this.player, this.trees,collisionHandler);
-    this.physics.add.collider(this.player,this.rocks,collisionHandler);
-    this.physics.add.collider(this.player,this.houses,collisionHandler);
-    this.physics.add.collider(this.player,this.flowers,collisionHandler);
-    this.physics.add.collider(this.player,this.wheat,collisionHandler);
+    this.physics.add.collider(this.player, this.trees,collisionHandler)
+    this.physics.add.collider(this.player,this.rocks,collisionHandler)
+    this.physics.add.collider(this.player,this.houses,collisionHandler)
+    this.physics.add.collider(this.player,this.flowers,collisionHandler)
+    this.physics.add.collider(this.player,this.wheat,collisionHandler)
+    this.physics.add.collider(this.player,this.cows)
+    this.physics.add.collider(this.player,this.bears,collisionWithBeastStartHandler,collisionWithBeastEndHandler)
+    this.physics.add.collider(this.player,this.chickens)
+    this.physics.add.collider(this.player,this.spiders,collisionWithBeastStartHandler,collisionWithBeastEndHandler)
+    this.physics.add.collider(this.player,this.dragons,collisionWithBeastStartHandler,collisionWithBeastEndHandler)
+
+    function collisionHandler(player,object){
+
+    }
+
+    function collisionWithBeastStartHandler(player,object){
+      if(object.name="bear"){
+        this.player.hittingbear=true
+      }
+      if(object.name="spider"){
+        this.player.hittingspider=true
+      }
+      if(object.name="dragon"){
+        this.player.hittingdragon=true
+      }
+    }
+    function collisionWithBeastEndHandler(player,object){
+        this.player.hittingbear=false
+        this.player.hittingspider=false
+        this.player.hittingdragon=false
+    }
+
     this.input.keyboard.on('keydown-SPACE',spaceDown,this)
     this.input.keyboard.on('keyup-SPACE',spaceUp,this)
+    this.treeFallingSound = this.sound.add('tree falling')
+    this.rockSmashSound = this.sound.add('rock smash')
+    this.swooshSound = this.sound.add('swoosh')
+    this.diggingSound = this.sound.add('digging')
+    this.pickAxeHitsSound = this.sound.add('pickaxe hits rock')
+    this.axeHitsTreeSound = this.sound.add('axe hits tree')
+    this.chickenscreaming = this.sound.add('chicken screaming')
+    this.dragonroar = this.sound.add('dragon roar')
+    this.bearroar = this.sound.add('bear roar')
+    this.spiderroar = this.sound.add('spider roar')
+    this.cowmooing = this.sound.add('cow mooing')
 
     function spaceDown(){
+      if(this.hitting=="tree"){
+            this.axeHitsTreeSound.play({loop: true})
+      }
+      if(this.hitting=="house"){
+            this.axeHitsTreeSound.play({loop: true})
+      }
+      if(this.hitting=="rock"){
+        this.pickAxeHitsSound.play({loop: true})
+      }
+      if(this.hitting=="chicken"){
+        this.chickenscreaming.play({loop: true})
+      }
+      if(this.hitting=="cow"){
+        this.cowmooing.play({loop: true})
+      }
+      if(this.hitting=="bear"){
+        this.bearroar.play({loop: true})
+      }
+      if(this.hitting=="dragon"){
+        this.dragonroar.play({loop: true})
+      }
+      if(this.hitting=="spider"){
+        this.spiderroar.play({loop: true})
+      }
       if(this.player.axe){
         this.swooshSound.play({loop: true})
       }
@@ -328,42 +407,16 @@ export default class TestScene extends Scene {
       }
     }
     function spaceUp(){
-      if(this.player.axe){
+        this.axeHitsTreeSound.stop()
+        this.pickAxeHitsSound.stop()
+        this.chickenscreaming.stop()
+        this.cowmooing.stop()
+        this.bearroar.stop()
+        this.dragonroar.stop()
+        this.spiderroar.stop()
         this.swooshSound.stop()
-      }
-      if(this.player.sword){
-        this.swooshSound.stop()
-      }
-      if(this.player.fishingrod){
-        this.swooshSound.stop()
-      }
-      if(this.player.pickaxe){
-        this.swooshSound.stop()
-      }
-      if(this.player.shovel){
         this.diggingSound.stop()
-      }
-    }
-
-
-
-    function collisionHandler(player,object){
-      // object.collided=true
-      // if(player.doingaction&&player.axe&&object.name=="tree"){
-      //   object.dead=true
-      // }
-      // if(player.doingaction&&player.pickaxe&&object.name=="rock"){
-      //   object.dead=true
-      // }
-      // if(player.doingaction&&(player.axe||player.sword)&&object.name=="house"){
-      //   object.dead=true
-      // }
-      // if(player.doingaction&&(player.axe||player.sword)&&object.name=="wheat"){
-      //   object.dead=true
-      // }
-      // if(player.doingaction&&(player.axe||player.sword)&&object.name=="flower"){
-      //   object.dead=true
-      // }
+        this.hittreeflag=""
     }
 
     for (const [key, value] of Object.entries(animations)) {
@@ -374,21 +427,142 @@ export default class TestScene extends Scene {
             repeat: -1
         });
     }
-    this.treeFallingSound = this.sound.add('tree falling');
-    this.rockSmashSound = this.sound.add('rock smash');
-    this.swooshSound = this.sound.add('swoosh');
-    this.diggingSound = this.sound.add('digging');
-    this.pickAxeHitsSound = this.sound.add('pickaxe hits rock');
-    this.pickAxeHittingSoundFlag=false
-    this.axeHitsTreeSound = this.sound.add('axe hits tree');
-    this.pickAxeHitsSound.once('complete', function () {
-      this.pickAxeHittingSoundFlag=false
-    }, this)
+    this.anims.create({
+        key: "cow walking up",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("cow", { start: 39, end: 41 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "cow walking down",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("cow", { start: 3, end: 5 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "cow walking left",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("cow", { start: 15, end: 17 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "cow walking right",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("cow", { start: 27, end: 29 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "chicken walking up",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("chicken", { start: 36, end: 38 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "chicken walking down",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("chicken", { start: 0, end: 2 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "chicken walking left",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("chicken", { start: 12, end: 14 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "chicken walking right",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("chicken", { start: 24, end: 26 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "spider walking up",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("spider", { start:9, end: 11 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "spider walking down",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("spider", { start: 0, end: 2 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "spider walking left",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("spider", { start: 3, end: 5 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "spider walking right",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("spider", { start: 6, end: 8 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "bear walking up",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("bear", { start:42, end: 44 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "bear walking down",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("bear", { start: 6, end: 8 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "bear walking left",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("bear", { start: 18, end: 20 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "bear walking right",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("bear", { start: 30, end: 32 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "dragon flying up",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("dragon", { start:0, end: 2 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "dragon flying down",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("dragon", { start: 6, end: 8 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "dragon flying left",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("dragon", { start: 9, end: 1 }),
+        repeat: -1
+    })
+    this.anims.create({
+        key: "dragon flying right",
+        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("dragon", { start: 3, end: 5 }),
+        repeat: -1
+    })
+    this.treeFallingSound = this.sound.add('tree falling')
+    this.rockSmashSound = this.sound.add('rock smash')
+    this.swooshSound = this.sound.add('swoosh')
+    this.diggingSound = this.sound.add('digging')
+    this.pickAxeHitsSound = this.sound.add('pickaxe hits rock')
+    this.axeHitsTreeSound = this.sound.add('axe hits tree')
+    this.chickenscreaming = this.sound.add('chicken screaming')
+    this.dragonroar = this.sound.add('dragon roar')
+    this.bearroar = this.sound.add('bear roar')
+    this.spiderroar = this.sound.add('spider roar')
+    this.cowmooing = this.sound.add('cow mooing')
     // this.physics.add.collider(this.player, this.clifflayer);
     this.cameras.main.startFollow(this.player,true,1,1)
     this.cameras.main.setFollowOffset(0,-this.player.height)
     let name=localStorage.getItem("name")
-    // socket.emit('player joining', JSON.stringify({"name":name,"x":this.player.x,"y":this.player.y}))
+    socket.emit('player joining', JSON.stringify({"name":name,"x":this.player.x,"y":this.player.y}))
     this.player.id=name
 
     socket.on('updateState',(data)=>{
@@ -403,14 +577,140 @@ export default class TestScene extends Scene {
       let houses=state.houses
       let flowers=state.flowers
       let wheat=state.wheat
+      let cows=state.cows
+      let chickens=state.chickens
+      let bears=state.bears
+      let dragons=state.dragons
+      let spiders=state.spiders
+
+      let cowsingroup = this.cows.getChildren()
+      for (let cow of cows){
+        if (!this.cowids.includes(cow._id)){
+          this.cowids.push(cow._id)
+          let newcow=this.physics.add.sprite(cow.x,cow.y,'cow').setCircle(20).setScale(1.3).setVisible(true)
+          newcow.name="cow"
+          newcow.mode=cow.mode
+          newcow.id=cow._id
+          newcow.health=cow.health
+          newcow.xdistlerp=cow.xdistlerp
+          newcow.ydistlerp=cow.ydistlerp
+          this.physics.world.enable(newcow);
+          newcow.body.setImmovable(true);
+          this.cows.add(newcow)
+        }
+        if(this.cowids.includes(cow._id)){
+          let targetCow=cowsingroup.find(sprite => sprite.id === cow._id)
+          targetCow.mode=cow.mode
+          targetCow.x=cow.oldx
+          targetCow.y=cow.oldy
+          targetCow.xdistlerp=cow.xdistlerp
+          targetCow.ydistlerp=cow.ydistlerp
+        }
+      }
+      let chickensingroup = this.chickens.getChildren()
+      for (let chicken of chickens){
+        if (!this.chickenids.includes(chicken._id)){
+          this.chickenids.push(chicken._id)
+          let newchicken=this.physics.add.sprite(chicken.x,chicken.y,'chicken').setCircle(20).setScale(1.3).setVisible(true)
+          newchicken.name="chicken"
+          newchicken.mode=chicken.mode
+          newchicken.id=chicken._id
+          newchicken.health=chicken.health
+          newchicken.xdistlerp=chicken.xdistlerp
+          newchicken.ydistlerp=chicken.ydistlerp
+          this.physics.world.enable(newchicken);
+          newchicken.body.setImmovable(true);
+          this.chickens.add(newchicken)
+        }
+        if(this.chickenids.includes(chicken._id)){
+          let targetChicken=chickensingroup.find(sprite => sprite.id === chicken._id)
+          targetChicken.mode=chicken.mode
+          targetChicken.x=chicken.oldx
+          targetChicken.y=chicken.oldy
+          targetChicken.xdistlerp=chicken.xdistlerp
+          targetChicken.ydistlerp=chicken.ydistlerp
+        }
+      }
+      let bearsingroup = this.bears.getChildren()
+      for (let bear of bears){
+        if (!this.bearids.includes(bear._id)){
+          this.bearids.push(bear._id)
+          let newbear=this.physics.add.sprite(bear.x,bear.y,'bear').setCircle(20).setScale(1.3).setVisible(true)
+          newbear.name="bear"
+          newbear.mode=bear.mode
+          newbear.id=bear._id
+          newbear.health=bear.health
+          newbear.xdistlerp=bear.xdistlerp
+          newbear.ydistlerp=bear.ydistlerp
+          this.physics.world.enable(newbear);
+          newbear.body.setImmovable(true);
+          this.bears.add(newbear)
+        }
+        if(this.bearids.includes(bear._id)){
+          let targetbear=bearsingroup.find(sprite => sprite.id === bear._id)
+          targetbear.mode=bear.mode
+          targetbear.x=bear.oldx
+          targetbear.y=bear.oldy
+          targetbear.xdistlerp=bear.xdistlerp
+          targetbear.ydistlerp=bear.ydistlerp
+        }
+      }
+      let dragonsingroup = this.dragons.getChildren()
+      for (let dragon of dragons){
+        if (!this.dragonids.includes(dragon._id)){
+          this.dragonids.push(dragon._id)
+          let newdragon=this.physics.add.sprite(dragon.x,dragon.y,'dragon').setScale(1.3).setVisible(true)
+          newdragon.name="dragon"
+          newdragon.mode=dragon.mode
+          newdragon.id=dragon._id
+          newdragon.xdistlerp=dragon.xdistlerp
+          newdragon.ydistlerp=dragon.ydistlerp
+          newdragon.health=dragon.health
+          this.physics.world.enable(newdragon);
+          newdragon.body.setImmovable(true);
+          this.dragons.add(newdragon)
+        }
+        if(this.dragonids.includes(dragon._id)){
+          let targetDragon=dragonsingroup.find(sprite => sprite.id === dragon._id)
+          targetDragon.mode=dragon.mode
+          targetDragon.x=dragon.oldx
+          targetDragon.y=dragon.oldy
+          targetDragon.xdistlerp=dragon.xdistlerp
+          targetDragon.ydistlerp=dragon.ydistlerp
+        }
+      }
+      let spidersingroup = this.spiders.getChildren()
+      for (let spider of spiders){
+        if (!this.spiderids.includes(spider._id)){
+          this.spiderids.push(spider._id)
+          let newspider=this.physics.add.sprite(spider.x,spider.y,'spider').setCircle(20).setScale(1.3).setVisible(true)
+          newspider.name="spider"
+          newspider.mode=spider.mode
+          newspider.id=spider._id
+          newspider.xdistlerp=spider.xdistlerp
+          newspider.ydistlerp=spider.ydistlerp
+          newspider.health=spider.health
+          this.physics.world.enable(newspider);
+          newspider.body.setImmovable(true);
+          this.spiders.add(newspider)
+        }
+        if(this.spiderids.includes(spider._id)){
+          let targetSpider=spidersingroup.find(sprite => sprite.id === spider._id)
+          targetSpider.mode=spider.mode
+          targetSpider.x=spider.oldx
+          targetSpider.y=spider.oldy
+          targetSpider.xdistlerp=spider.xdistlerp
+          targetSpider.ydistlerp=spider.ydistlerp
+        }
+      }
       for (let tree of trees){
         if (!this.treeids.includes(tree._id)){
           this.treeids.push(tree._id)
           let newtree=this.physics.add.staticSprite(tree.x,tree.y,'tree segment').setCircle(50).setScale(1.3).setVisible(false).setOffset(-10,-10)
           newtree.name="tree"
           newtree.falling=1
+          newtree.health=tree.health
           newtree.id=tree._id
-          console.log(newtree)
           this.trees.add(newtree)
         }
       }
@@ -421,9 +721,9 @@ export default class TestScene extends Scene {
           newrock.type=rock.type
           newrock.name="rock"
           newrock.breaking=1
+          newrock.health=rock.health
           newrock.alpha=1
           newrock.id=rock._id
-          console.log(newrock)
           this.rocks.add(newrock)
         }
       }
@@ -432,8 +732,8 @@ export default class TestScene extends Scene {
           this.houseids.push(house._id)
           let newhouse=this.physics.add.staticSprite(house.x,house.y,'house').setBodySize(200, 145).setVisible(false)
           newhouse.name="house"
+          newhouse.health=house.health
           newhouse.id=house._id
-          console.log(newhouse)
           this.houses.add(newhouse)
         }
       }
@@ -443,8 +743,8 @@ export default class TestScene extends Scene {
           let newflower=this.physics.add.staticSprite(flower.x,flower.y,'flower').setBodySize(50, 50).setVisible(false)
           newflower.colour=flower.colour
           newflower.name="flower"
+          newflower.health=flower.health
           newflower.id=flower._id
-          console.log(newflower)
           this.flowers.add(newflower)
         }
       }
@@ -453,8 +753,8 @@ export default class TestScene extends Scene {
           this.wheatids.push(wheat._id)
           let newwheat=this.physics.add.staticSprite(wheat.x,wheat.y,'wheat').setBodySize(60, 60).setVisible(false)
           newwheat.name="wheat"
+          newwheat.health=wheat.health
           newwheat.id=wheat._id
-          console.log(newwheat)
           this.wheat.add(newwheat)
         }
       }
@@ -528,6 +828,26 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
     // for (let sprite of this.tempSprites.list){
     //   sprite.destroy()
     // }
+    const cursors=this.input.keyboard.createCursorKeys()
+    if(cursors.space.isDown){
+      this.player.doingaction=true
+    }
+    if(this.player.tiredness>0){
+      this.player.tiredness-=0.0005
+    }
+    if(this.player.hunger>0){
+      this.player.hunger-=0.0005
+    }
+    if(this.player.tiredness<0){
+      if(this.player.health>0.1){
+        this.player.health-=0.0005
+      }
+    }
+    if(this.player.hunger<0.1){
+      if(this.player.health>0){
+        this.player.health-=0.0005
+      }
+    }
     this.tempSprites.clear(true,true);
     this.graphics.clear();
     this.player.depth=this.player.y
@@ -580,6 +900,21 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
     if(this.houses){
       allObjects.push(...this.houses.children.entries)
     }
+    if(this.cows){
+      allObjects.push(...this.cows.children.entries)
+    }
+    if(this.chickens){
+      allObjects.push(...this.chickens.children.entries)
+    }
+    if(this.bears){
+      allObjects.push(...this.bears.children.entries)
+    }
+    if(this.spiders){
+      allObjects.push(...this.spiders.children.entries)
+    }
+    if(this.dragons){
+      allObjects.push(...this.dragons.children.entries)
+    }
     if(allObjects){
       for(let object of allObjects){
           let distanceFromPlayerX=object.x-centreX
@@ -609,7 +944,7 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
     for(let object of allObjectsSorted){
       object.caninteract=false
 
-      if(object.distance<130){
+      if(object.distance<150){
         if(object.left&&this.player.lrdirection=="left"){
           object.caninteract=true
         }
@@ -622,21 +957,66 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
         if(object.below&&this.player.uddirection=="below"){
           object.caninteract=true
         }
+        if(object.name=="bear"){
+          this.hitting="bear"
+          this.hitbearflag=true
+        }
+        if(object.name=="chicken"&&(this.player.pickaxe||this.player.axe||this.player.hammer||this.player.sword)){
+          this.hitting="chicken"
+          this.hitchickenflag=true
+        }
+        if(object.name=="spider"&&(this.player.pickaxe||this.player.axe||this.player.hammer||this.player.sword)){
+          this.hitting="spider"
+          this.hitspiderflag=true
+        }
+        if(object.name=="dragon"&&(this.player.pickaxe||this.player.axe||this.player.hammer||this.player.sword)){
+          this.hitting="dragon"
+          this.hitdragonflag=true
+
+        }
+        if(object.name=="cow"&&(this.player.pickaxe||this.player.axe||this.player.hammer||this.player.sword)){
+          this.hitting="cow"
+          this.hitcowflag=true
+        }
+        if(object.name=="tree"&&this.player.axe){
+        this.hitting="tree"
+        this.hittreeflag=true
+        }
+        if(object.name=="rock"&&this.player.pickaxe){
+        this.hitting="rock"
+        this.hitrockflag=true
+        }
+        if(object.name=="house"&&(this.player.pickaxe||this.player.axe||this.player.hammer||this.player.sword)){
+        this.hitting="house"
+        this.hithouseflag=true
+        }
+        if(object.name=="wheat"&&(this.player.axe||this.player.sword)){
+        this.hitting="wheat"
+        this.hitwheatflag=true
+        }
+        if(object.name=="flower"&&(this.player.axe||this.player.sword)){
+        this.hitting="flower"
+        this.hitflowerflag=true
       }
-      if(object.alpha<0.05){
+      // if(this.player.hittingbear){
+      //   this.player.health-=0.01
+      // }
+      // if(this.player.hittingspider){
+      //   this.player.health-=0.02
+      // }
+      // if(this.player.hittingdragon){
+      //   this.player.health-=0.03
+      // }
+      if(object.alpha<0.03){
         this.destroyObject(object)
       }
       if(object.caninteract&&this.player.doingaction){
-        if(object.name=="tree"&&this.player.axe){
-          object.isbeingdestroyed=true
-          this.axeHitsTreeSound.play()
+        console.log(object.health,object.alpha)
+        if(object.health>0){
+          object.health-=0.01
         }
-        if(object.name=="rock"&&this.player.pickaxe){
+        if(object.health<=0){
           object.isbeingdestroyed=true
-          if(this.pickAxeHittingSoundFlag==false){
-            this.pickAxeHitsSound.play()
-          }
-          this.pickAxeHittingSoundFlag=true
         }
         if(object.x<centreX){
           object.fallingleft=true
@@ -653,6 +1033,123 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
         if(object.y>=centreY){
           object.fallingdown=true
           object.fally=1
+        }
+      }
+      if((object.name=="cow"||object.name=="dragon"||object.name=="spider"||object.name=="bear"||object.name=="chicken")&&object.alpha>=0.03){
+        if(object.name=="cow"){
+          let angle = Math.atan2(object.xdistlerp,-object.ydistlerp);
+          let angleInDegrees = Phaser.Math.RadToDeg(angle);
+          if (angleInDegrees > -45 && angleInDegrees <= 45) {
+            object.anims.play('cow walking up', true)
+          } else if (angleInDegrees > 45 && angleInDegrees <= 135) {
+            object.anims.play('cow walking right', true)
+          } else if (angleInDegrees > 135 || angleInDegrees <= -135) {
+            object.anims.play('cow walking down', true)
+          } else {
+            object.anims.play('cow walking left', true)
+        }
+        }
+        if(object.name=="dragon"){
+          let angle = Math.atan2(object.xdistlerp,-object.ydistlerp);
+          let angleInDegrees = Phaser.Math.RadToDeg(angle);
+          if (angleInDegrees > -45 && angleInDegrees <= 45) {
+            object.anims.play('dragon flying up', true)
+          } else if (angleInDegrees > 45 && angleInDegrees <= 135) {
+            object.anims.play('dragon flying right', true)
+          } else if (angleInDegrees > 135 || angleInDegrees <= -135) {
+            object.anims.play('dragon flying down', true)
+          } else {
+            object.anims.play('dragon flying left', true)
+        }
+        }
+        if(object.name=="spider"){
+          let angle = Math.atan2(object.xdistlerp,-object.ydistlerp);
+          let angleInDegrees = Phaser.Math.RadToDeg(angle);
+          if (angleInDegrees > -45 && angleInDegrees <= 45) {
+            object.anims.play('spider walking up', true)
+          } else if (angleInDegrees > 45 && angleInDegrees <= 135) {
+            object.anims.play('spider walking right', true)
+          } else if (angleInDegrees > 135 || angleInDegrees <= -135) {
+            object.anims.play('spider walking down', true)
+          } else {
+            object.anims.play('spider walking left', true)
+        }
+        }
+        if(object.name=="bear"){
+          let angle = Math.atan2(object.xdistlerp,-object.ydistlerp);
+          let angleInDegrees = Phaser.Math.RadToDeg(angle);
+          if (angleInDegrees > -45 && angleInDegrees <= 45) {
+            object.anims.play('bear walking up', true)
+          } else if (angleInDegrees > 45 && angleInDegrees <= 135) {
+            object.anims.play('bear walking right', true)
+          } else if (angleInDegrees > 135 || angleInDegrees <= -135) {
+            object.anims.play('bear walking down', true)
+          } else {
+            object.anims.play('bear walking left', true)
+        }
+        }
+        if(object.name=="chicken"){
+          let angle = Math.atan2(object.xdistlerp,-object.ydistlerp);
+          let angleInDegrees = Phaser.Math.RadToDeg(angle);
+          if (angleInDegrees > -45 && angleInDegrees <= 45) {
+            object.anims.play('chicken walking up', true)
+          } else if (angleInDegrees > 45 && angleInDegrees <= 135) {
+            object.anims.play('chicken walking right', true)
+          } else if (angleInDegrees > 135 || angleInDegrees <= -135) {
+            object.anims.play('chicken walking down', true)
+          } else {
+            object.anims.play('chicken walking left', true)
+        }
+        }
+          object.x=object.x+object.xdistlerp
+          object.y=object.y+object.ydistlerp
+      }
+      if(object.name=="bear"){
+        let bear=object
+        if(bear.isbeingdestroyed){
+          bear.alpha=bear.alpha-0.01
+        }
+      }
+      if(object.name=="cow"){
+        let cow=object
+        if(cow.isbeingdestroyed){
+          cow.alpha=cow.alpha-0.01
+        }
+      }
+      if(object.name=="chicken"){
+        let chicken=object
+        if(chicken.isbeingdestroyed){
+          chicken.alpha=chicken.alpha-0.01
+        }
+      }
+      if(object.name=="spider"){
+        let spider=object
+        if(spider.isbeingdestroyed){
+          spider.alpha=spider.alpha-0.01
+        }
+      }
+      if(object.name=="dragon"){
+        let dragon=object
+        if(dragon.isbeingdestroyed){
+          dragon.alpha=dragon.alpha-0.01
+        }
+      }
+      if(object.name=="wheat"){
+        let wheat=object
+        if(wheat.isbeingdestroyed){
+          wheat.alpha=wheat.alpha-0.01
+        }
+      }
+      if(object.name=="flower"){
+        let flower=object
+        if(flower.isbeingdestroyed){
+          flower.alpha=flower.alpha-0.01
+        }
+      }
+      if(object.name=="house"){
+        let house=object
+        if(house.isbeingdestroyed){
+          house.alpha=house.alpha-0.01
         }
       }
       if(object.name=="rock"){
@@ -869,42 +1366,42 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
           const pointX=house.x+lerpedDistanceX*level
           const pointY=house.y+lerpedDistanceY*level
           if(level==0){
-            this.tempSprites.add(this.add.polygon(pointX,pointY,[tl,bl,br,tr],0x4b2d0b).setStrokeStyle(5, 0x1b0000))
+            this.tempSprites.add(this.add.polygon(pointX,pointY,[tl,bl,br,tr],0x4b2d0b).setStrokeStyle(5, 0x1b0000).setAlpha(house.alpha))
           }
           if(level<7){
-            this.tempSprites.add(this.add.polygon(pointX,pointY,[tl,bl,br,tr],0x4b2d0b).setStrokeStyle(1, 0x1b0000))
+            this.tempSprites.add(this.add.polygon(pointX,pointY,[tl,bl,br,tr],0x4b2d0b).setStrokeStyle(1, 0x1b0000).setAlpha(house.alpha))
           }
           if(level===7){
             lastPointX=house.x+lerpedDistanceX*level
             lastPointY=house.y+lerpedDistanceY*level
-            this.tempSprites.add(this.add.graphics().lineStyle(5,0x1b0000).moveTo(house.x-100, house.y-75).lineTo(house.x+addX-100,house.y+addY-75).strokePath())
-            this.tempSprites.add(this.add.graphics().lineStyle(5,0x1b0000).moveTo(house.x+100, house.y-75).lineTo(house.x+addX+100,house.y+addY-75).strokePath())
-            this.tempSprites.add(this.add.graphics().lineStyle(5,0x1b0000).moveTo(house.x-100, house.y+75).lineTo(house.x+addX-100,house.y+addY+75).strokePath())
-            this.tempSprites.add(this.add.graphics().lineStyle(5,0x1b0000).moveTo(house.x+100, house.y+75).lineTo(house.x+addX+100,house.y+addY+75).strokePath())
-            this.tempSprites.add(this.add.polygon(lastPointX,lastPointY,[tl,bl,br,tr],0x4b2d0b).setStrokeStyle(5, 0x1b0000))
+            this.tempSprites.add(this.add.graphics().lineStyle(5,0x1b0000).moveTo(house.x-100, house.y-75).lineTo(house.x+addX-100,house.y+addY-75).strokePath().setAlpha(house.alpha))
+            this.tempSprites.add(this.add.graphics().lineStyle(5,0x1b0000).moveTo(house.x+100, house.y-75).lineTo(house.x+addX+100,house.y+addY-75).strokePath().setAlpha(house.alpha))
+            this.tempSprites.add(this.add.graphics().lineStyle(5,0x1b0000).moveTo(house.x-100, house.y+75).lineTo(house.x+addX-100,house.y+addY+75).strokePath().setAlpha(house.alpha))
+            this.tempSprites.add(this.add.graphics().lineStyle(5,0x1b0000).moveTo(house.x+100, house.y+75).lineTo(house.x+addX+100,house.y+addY+75).strokePath().setAlpha(house.alpha))
+            this.tempSprites.add(this.add.polygon(lastPointX,lastPointY,[tl,bl,br,tr],0x4b2d0b).setStrokeStyle(5, 0x1b0000).setAlpha(house.alpha))
           }
           if(level>7){
             let newtl=[0,0]
             let newtr=[200-(levelshrinker*30),0]
             let newbl=[0,150]
             let newbr=[200-(levelshrinker*30),150]
-            this.tempSprites.add(this.add.polygon(pointX,pointY,[newtl,newbl,newbr,newtr],0x4b2d0b).setStrokeStyle(1, 0x1b0000))
+            this.tempSprites.add(this.add.polygon(pointX,pointY,[newtl,newbl,newbr,newtr],0x4b2d0b).setStrokeStyle(1, 0x1b0000).setAlpha(house.alpha))
             levelshrinker+=1
           }
         }
           var polygonPoints = [lastPointX-100,lastPointY-75,lastPointX-100,lastPointY+75,house.x+addXRoof,house.y+addYRoof+75,house.x+addXRoof,house.y+addYRoof-75];
-           var graphics = this.add.graphics().fillStyle(0x4b2d0b, 1).lineStyle(5, 0x1b0000).beginPath().moveTo(polygonPoints[0], polygonPoints[1])
+           var graphics = this.add.graphics().fillStyle(0x4b2d0b, 1).lineStyle(5, 0x1b0000).beginPath().moveTo(polygonPoints[0], polygonPoints[1]).setAlpha(house.alpha)
            for (var i = 2; i < polygonPoints.length; i += 2) {
                graphics.lineTo(polygonPoints[i], polygonPoints[i + 1]);
            }
            graphics.closePath().fillPath().strokePath();
            this.tempSprites.add(graphics)
            var polygonPoints = [house.x+addXRoof,house.y+addYRoof+75,house.x+addXRoof,house.y+addYRoof-75,lastPointX+100,lastPointY-75,lastPointX+100,lastPointY+75,];
-              var graphics = this.add.graphics().fillStyle(0x4b2d0b,1).lineStyle(5, 0x1b0000).beginPath().moveTo(polygonPoints[0], polygonPoints[1])
+              var graphics = this.add.graphics().fillStyle(0x4b2d0b,1).lineStyle(5, 0x1b0000).beginPath().moveTo(polygonPoints[0], polygonPoints[1]).setAlpha(house.alpha)
               for (var i = 2; i < polygonPoints.length; i += 2) {
                   graphics.lineTo(polygonPoints[i], polygonPoints[i + 1]);
               }
-              graphics.closePath().fillPath().strokePath();
+              graphics.closePath().fillPath().strokePath().setAlpha(house.alpha)
               this.tempSprites.add(graphics)
         for(let house of this.houses.children.entries){
           let distanceFromPlayerX=house.x-centreX
@@ -942,29 +1439,26 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
     //     player.anims.stop();
     //   }
     // }
-    // this.incr+=1
-    // let x=this.player.x
-    // let y=this.player.y
-    // let id=this.player.id
-    // // console.log(x,y,id)
-    // this.player.moving=false
-    // let direction="still"
-    const cursors=this.input.keyboard.createCursorKeys()
+    this.incr+=1
     if(cursors.right.isDown){
+      this.player.moving=true
       this.player.lrdirection="right"
       this.player.setVelocityX(200);
       this.player.setFlipX(false);
     }
      if(cursors.up.isDown){
+       this.player.moving=true
        this.player.uddirection="up"
        this.player.setFlipX(true);
       this.player.setVelocityY(-200);
     }
      if(cursors.down.isDown){
+       this.player.moving=true
        this.player.uddirection="down"
       this.player.setVelocityY(200);
     }
     if(cursors.left.isDown){
+      this.player.moving=true
       this.player.lrdirection="left"
       this.player.setVelocityX(-200);
     }
@@ -1080,6 +1574,7 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
         this.player.anims.play('runbrownhairfront',true)
       }
         if (this.player.body.velocity.x===0&&this.player.body.velocity.y===0) {
+
           if(this.player.uddirection=="up"){
             if(this.player.lrdirection=="left"){
               this.player.anims.play('idlebrownhairback',10,true)
@@ -1174,15 +1669,12 @@ this.hungerbarvalue=this.graphics23.fillRect(0, 0, 150, 20)
           }
         }
       }
-
-
-
-
-    //
-    //
-    // if(this.incr>4){
-    //   this.sendstate(x,y,id,moving,direction)
-    //   this.incr=0
-    // }
+    if(this.incr>4){
+      // this.player.moving=false
+      // let direction="still"
+      this.sendstate(this.player.x,this.player.y,this.player.id)
+      this.incr=0
+    }
   }
+}
 }

@@ -15,18 +15,24 @@ const collectiveInventorySchema = new mongoose.Schema({
   swords:Number,
   axes:Number,
   pickaxes:Number,
+  pinecones:Number,
   fishingrods:Number,
   spades:Number,
   apples:Number,
   oranges:Number,
   appleseeds:Number,
   orangeseeds:Number,
+  flowerseeds:Number,
+  flowers:Number,
+  clay:Number,
+  pots:Number,
+  mortarandpestles:Number,
+  flowerseeds:Number,
   bread:Number,
   rawchicken:Number,
   cookedchicken:Number,
   rawbeef:Number,
   cookedbeef:Number,
-
 })
 
 module.exports=mongoose.model('Collectiveinventory', collectiveInventorySchema)

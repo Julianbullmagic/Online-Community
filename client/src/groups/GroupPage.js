@@ -56,7 +56,8 @@ class GroupPage extends Component {
     this.updateUser=this.updateUser.bind(this)
     this.handleClickTool=this.handleClickTool.bind(this)
     this.join=this.join.bind(this)
-    this.updateParentState = this.updateParentState.bind(this);
+    this.updateCollectiveInventory = this.updateCollectiveInventory.bind(this);
+    this.updateCollectiveInventoryCopy = this.updateCollectiveInventoryCopy.bind(this);
     let socket
   }
 
@@ -71,15 +72,21 @@ class GroupPage extends Component {
     if(process.env.NODE_ENV=="development"){
       this.socket=io(server);
     }
-    window.addEventListener('updateCollectiveInventory', this.updateParentState);
+    window.addEventListener('updateCollectiveInventory', this.updateCollectiveInventory);
+    window.addEventListener('updateCollectiveInventoryCopy', this.updateCollectiveInventoryCopy);
   }
 
-updateParentState(event){
+updateCollectiveInventory(event){
   const transmittedData = event.detail;
   this.setState({ collectiveInventory: transmittedData });
 };
+updateCollectiveInventoryCopy(event){
+  const transmittedData = event.detail;
+  this.setState({ collectiveInventoryCopy: transmittedData });
+};
   componentWillUnmount(){
     window.removeEventListener('updateCollectiveInventory', this.updateParentState);
+    window.removeEventListener('updateCollectiveInventoryCopy', this.updateParentState);
   }
 
   handleClickTool(event,tool){
@@ -307,6 +314,7 @@ let equippedtool=localStorage.getItem("equipped tool")
                         {JSON.stringify(this.state.collectiveInventory)}
                         <h2>Goods and Materials</h2>
                         <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703889644/cedar_log_vgnser.png"/><h3>{this.state.collectiveInventory.wood} Wood</h3>
+                        <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1704686921/stone_aolbhe.png"/><h3>{this.state.collectiveInventory.stone} Stone</h3>
                         <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703890100/iron_ore_2_ieqib1.png"/><h3>{this.state.collectiveInventory.ironore} Iron Ore</h3>
                         <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703890099/iron_bar_cje575.png"/><h3>{this.state.collectiveInventory.steelbar} Steel Bars</h3>
                         <img src="https://res.cloudinary.com/dfksh5mnb/image/upload/v1703890099/copper_ore_xvc5ot.png"/><h3>{this.state.collectiveInventory.copperore} Copper Ore</h3>
